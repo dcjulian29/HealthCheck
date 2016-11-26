@@ -7,10 +7,11 @@
     <ProjectGuid>{1F005DF5-B814-4C25-BBD7-9A60014F3AAC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HealthCheck.Interfaces</RootNamespace>
+    <RootNamespace>HealthCheck</RootNamespace>
     <AssemblyName>HealthCheck.Interfaces</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckResult.cs" />
+    <Compile Include="IHealthCheckPlugin.cs" />
+    <Compile Include="IHealthStatus.cs" />
+    <Compile Include="IMailDelieveryStatus.cs" />
+    <Compile Include="IStatusListener.cs" />
+    <Compile Include="PluginStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
