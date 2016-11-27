@@ -18,6 +18,8 @@
         /// <summary>
         /// Process a health check result.
         /// </summary>
+        /// <param name="status">The status of a health check.</param>
+        /// <returns><c>true</c> if the listener processed the status; otherwise, <c>false</c></returns>
         bool Process(IHealthStatus status);
     }
 }

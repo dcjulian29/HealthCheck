@@ -8,6 +8,9 @@ namespace HealthCheck
     /// </summary>
     public interface IMailDeliveryStatus
     {
+        /// <summary>
+        /// Gets or sets the the collection of emails.
+        /// </summary>
         IEnumerable<MailMessage> Emails { get; set; }
     }
 }

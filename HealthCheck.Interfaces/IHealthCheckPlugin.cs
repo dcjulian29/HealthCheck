@@ -37,7 +37,9 @@ namespace HealthCheck
         /// <summary>
         /// Load up configuration settings from an XML fragment
         /// </summary>
-        /// <param name="configurationElement"></param>
+        /// <param name="configurationElement">
+        /// XML Fragment containing configuration information for the plugin
+        /// </param>
         void SetTaskConfiguration(XElement configurationElement);
 
         /// <summary>
