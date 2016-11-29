@@ -1,0 +1,111 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Common.Logging;
+using Quartz;
+
+namespace HealthCheck.Framework
+{
+    /// <summary>
+    /// Quartz job runner for health check plugins.
+    /// </summary>
+    public class HealthCheckJob : IJob, IHealthCheckJob
+    {
+        private static ILog _log = Common.Logging.LogManager.GetLogger<HealthCheckJob>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HealthCheckJob"/> class.
+        /// </summary>
+        public HealthCheckJob()
+        {
+            Listeners = new List<IStatusListener>();
+            Triggers = new List<ITrigger>();
+            Id = Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// Gets or sets the unique identifier of this health check job.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the XML configuration node for this heath check job.
+        /// </summary>
+        public JobConfiguration JobConfiguration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the listeners that should respond to the result of a health check.
+        /// </summary>
+        public List<IStatusListener> Listeners { get; set; }
+
+        /// <summary>
+        /// Gets or sets the health check plugin to run.
+        /// </summary>
+        public IHealthCheckPlugin Plugin { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of Quartz triggers.
+        /// </summary>
+        public List<ITrigger> Triggers { get; set; }
+
+        /// <summary>
+        /// Execute the plugin via the Quartz job execution handler.
+        /// </summary>
+        /// <param name="context">A Quartz context containing handles to various information.</param>
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+
+                var status = Plugin.Execute();
+
+                sw.Stop();
+
+                status.Plugin = Plugin;
+
+                _log.Debug(
+                    m => m(
+                        "Executed plugin '{0}' - {1} [{2}ms]",
+                        Plugin.Name,
+                        status.Status,
+                        sw.ElapsedMilliseconds));
+
+                NotifyListeners(status);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(m => m("Exception Executing {0}: {1}", Plugin.Name, ex.ToString()), ex);
+                Plugin.PluginStatus = PluginStatus.TaskExecutionFailure;
+            }
+        }
+
+        /// <summary>
+        /// Write out any notifications to listeners.
+        /// </summary>
+        /// <param name="status">The result of a health check execution.</param>
+        public void NotifyListeners(IHealthStatus status)
+        {
+            if (status.Timestamp == DateTime.MinValue)
+            {
+                status.Timestamp = DateTime.Now;
+            }
+
+            foreach (var listener in Listeners)
+            {
+                try
+                {
+                    if (status.Status >= listener.Threshold)
+                    {
+                        listener.Process(status);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(m => m("Error Publishing Status To Listener: {0}", ex.ToString()), ex);
+                }
+            }
+        }
+    }
+}
