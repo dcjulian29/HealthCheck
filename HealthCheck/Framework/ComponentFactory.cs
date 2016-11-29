@@ -20,17 +20,15 @@ namespace HealthCheck.Framework
 
         private DirectoryCatalog _catalog;
         private CompositionContainer _container;
+        private string _pluginLocation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ComponentFactory"/> class.
         /// </summary>
         public ComponentFactory()
         {
-            var path = Path.Combine(Environment.CurrentDirectory, "plugins");
-            _log.Debug(m => m("Looking in '{0}' for plug-ins...", path));
-
-            _catalog = new DirectoryCatalog(path);
-            _container = new CompositionContainer(_catalog);
+            _pluginLocation = Path.Combine(Environment.CurrentDirectory, "plugins");
+            _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
         }
 
         /// <summary>
@@ -156,6 +154,15 @@ namespace HealthCheck.Framework
             }
 
             _log.Debug(m => m("Attempting to create a {0} named {1}.", typeof(T), typeName));
+
+            if (_container == null)
+            {
+                if (Directory.Exists(_pluginLocation))
+                {
+                    _catalog = new DirectoryCatalog(_pluginLocation);
+                    _container = new CompositionContainer(_catalog);
+                }
+            }
 
             try
             {

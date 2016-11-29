@@ -15,7 +15,17 @@ namespace HealthCheck.Framework
     public class ConfigurationReader : IConfigReader
     {
         private static ILog _log = LogManager.GetLogger<ConfigurationReader>();
+        private string _configurationLocation;
         private XElement _rootNode;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigurationReader"/> class.
+        /// </summary>
+        public ConfigurationReader()
+        {
+            _configurationLocation = Path.Combine(Environment.CurrentDirectory, "conf");
+            _log.Debug(m => m("Will look in '{0}' for configuration files...", _configurationLocation));
+        }
 
         /// <summary>
         /// Parses configuration and creates a Quartz Calendar (including nested calendars) that
@@ -70,12 +80,13 @@ namespace HealthCheck.Framework
         {
             var groups = new List<HealthCheckGroup>();
 
-            _log.Debug(m => m("Scanning '{0}' for configuration files...", Environment.CurrentDirectory));
-
-            foreach (var file in Directory.GetFiles("conf", "*.config"))
+            if (Directory.Exists(_configurationLocation))
             {
-                _log.Info(m => m("Parsing {0} for configuration...", file));
-                groups.AddRange(ReadFile(file));
+                foreach (var file in Directory.GetFiles(_configurationLocation, "*.config"))
+                {
+                    _log.Info(m => m("Parsing {0} for configuration...", file));
+                    groups.AddRange(ReadFile(file));
+                }
             }
 
             return groups;
