@@ -51,7 +51,7 @@ namespace HealthCheck
         {
             _log.Info(m => m("----> HealthCheck Service is Starting..."));
 
-            ReadConfigurationSettings();
+            Groups = _reader.ReadGroups();
         }
 
         /// <summary>
@@ -60,11 +60,6 @@ namespace HealthCheck
         public void Stop()
         {
             _log.Info(m => m("----> HealthCheck Service is Stoping..."));
-        }
-
-        private void ReadConfigurationSettings()
-        {
-            this.Groups = _reader.ReadGroups();
         }
     }
 }
