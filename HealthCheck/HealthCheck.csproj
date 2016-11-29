@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HealthCheck</RootNamespace>
     <AssemblyName>HealthCheck</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,6 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -61,6 +63,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="ToolKit, Version=2016.10.14.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ToolKit.2016.10.14.1\lib\net45\ToolKit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Topshelf, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
       <HintPath>..\packages\Topshelf.4.0.3\lib\net452\Topshelf.dll</HintPath>
       <Private>True</Private>
@@ -71,7 +77,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\ComponentFactory.cs" />
+    <Compile Include="Framework\ConfigurationReader.cs" />
+    <Compile Include="Framework\JobConfiguration.cs" />
+    <Compile Include="Framework\HealthCheckGroup.cs" />
+    <Compile Include="Framework\HealthCheckJob.cs" />
+    <Compile Include="Framework\IComponentFactory.cs" />
+    <Compile Include="Framework\IConfigReader.cs" />
+    <Compile Include="Framework\IHealthCheckJob.cs" />
     <Compile Include="HealthService.cs" />
+    <Compile Include="Framework\PluginManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -80,7 +95,15 @@
     <None Include="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HealthCheck.Interfaces\HealthCheck.Interfaces.csproj">
+      <Project>{1f005df5-b814-4c25-bbd7-9a60014f3aac}</Project>
+      <Name>HealthCheck.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

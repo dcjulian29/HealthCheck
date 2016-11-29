@@ -19,11 +19,6 @@ namespace HealthCheck
         string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the node id
-        /// </summary>
-        int NodeId { get; set; }
-
-        /// <summary>
         /// Gets or sets the plugin last reported status.
         /// </summary>
         PluginStatus PluginStatus { get; set; }
