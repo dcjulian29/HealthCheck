@@ -29,6 +29,39 @@ namespace HealthCheck
         }
 
         [Fact]
+        public void GetPlugin_Should_BeAbleToInstantiateTwoNonSharedInstances()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var plugin1 = factory.GetPlugin("ContractName1");
+            var plugin2 = factory.GetPlugin("ContractName1");
+
+            plugin1.Name = "Plugin1";
+            plugin2.Name = "Plugin2";
+
+            // Assert
+            Assert.IsType<DummyPlugin1>(plugin1);
+            Assert.IsType<DummyPlugin1>(plugin2);
+            Assert.NotEqual(plugin1.Name, plugin2.Name);
+        }
+
+        [Fact]
+        public void GetPlugin_Should_BeAbleToInstantiateTwoSharedInstances()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var plugin1 = factory.GetPlugin("ContractName2");
+            var plugin2 = factory.GetPlugin("ContractName2");
+
+            // Assert
+            Assert.Same(plugin1, plugin2);
+        }
+
+        [Fact]
         public void GetPlugin_Should_LoadNamedInstance_When_SpecifyingByName()
         {
             // Arrange
@@ -39,8 +72,8 @@ namespace HealthCheck
             var plugin2 = factory.GetPlugin("ContractName2");
 
             // Assert
-            Assert.Equal(typeof(DummyPlugin1), plugin1.GetType());
-            Assert.Equal(typeof(DummyPlugin2), plugin2.GetType());
+            Assert.IsType<DummyPlugin1>(plugin1);
+            Assert.IsType<DummyPlugin2>(plugin2);
         }
 
         [Fact]
