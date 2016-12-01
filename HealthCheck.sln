@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck.Interfaces", "H
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck", "HealthCheck\HealthCheck.csproj", "{4FC482B7-6D90-473C-81A6-47224D2932E9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D6FCAC0F-6B59-4453-BEE4-2A023F75C777}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +25,15 @@ Global
 		{4FC482B7-6D90-473C-81A6-47224D2932E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FC482B7-6D90-473C-81A6-47224D2932E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FC482B7-6D90-473C-81A6-47224D2932E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F} = {D6FCAC0F-6B59-4453-BEE4-2A023F75C777}
 	EndGlobalSection
 EndGlobal
