@@ -28,6 +28,17 @@ namespace HealthCheck.Framework
         public ComponentFactory()
         {
             _pluginLocation = Path.Combine(Environment.CurrentDirectory, "plugins");
+
+            _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComponentFactory"/> class.
+        /// </summary>
+        public ComponentFactory(string pluginLocation)
+        {
+            _pluginLocation = pluginLocation;
+
             _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
         }
 
@@ -157,11 +168,8 @@ namespace HealthCheck.Framework
 
             if (_container == null)
             {
-                if (Directory.Exists(_pluginLocation))
-                {
-                    _catalog = new DirectoryCatalog(_pluginLocation);
-                    _container = new CompositionContainer(_catalog);
-                }
+                _catalog = new DirectoryCatalog(_pluginLocation);
+                _container = new CompositionContainer(_catalog);
             }
 
             try
