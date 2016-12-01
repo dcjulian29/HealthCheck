@@ -29,6 +29,91 @@ namespace HealthCheck
         }
 
         [Fact]
+        public void GetListener_Should_BeAbleToInstantiateTwoNonSharedInstances()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener1 = factory.GetListener("Listen1");
+            var listener2 = factory.GetListener("Listen1");
+
+            listener1.Threshold = CheckResult.Success;
+            listener2.Threshold = CheckResult.Error;
+
+            // Assert
+            Assert.NotEqual(listener1.Threshold, listener2.Threshold);
+        }
+
+        [Fact]
+        public void GetListener_Should_BeAbleToInstantiateTwoSharedInstances()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener1 = factory.GetListener("Listen2");
+            var listener2 = factory.GetListener("Listen2");
+
+            // Assert
+            Assert.Same(listener1, listener2);
+        }
+
+        [Fact]
+        public void GetListener_Should_InstantiateTheNamedPlugin_When_AskedByContractName()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener = factory.GetListener("Listen1");
+
+            // Assert
+            Assert.IsType<DummyListener1>(listener);
+        }
+
+        [Fact]
+        public void GetListener_Should_LoadNamedInstance_When_SpecifyingByName()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener1 = factory.GetListener("Listen1");
+            var listener2 = factory.GetListener("Listen2");
+
+            // Assert
+            Assert.IsType<DummyListener1>(listener1);
+            Assert.IsType<DummyListener2>(listener2);
+        }
+
+        [Fact]
+        public void GetListener_Should_ReturnNull_When_ListenerTypeDoesNotExist()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener = factory.GetListener("NonExistentListener");
+
+            // Assert
+            Assert.Null(listener);
+        }
+
+        [Fact]
+        public void GetListener_Should_ThrowInvalidArgumentException_When_TypeNameIsEmpty()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var listener = factory.GetListener(String.Empty);
+            });
+        }
+
+        [Fact]
         public void GetPlugin_Should_BeAbleToInstantiateTwoNonSharedInstances()
         {
             // Arrange
