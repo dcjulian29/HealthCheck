@@ -12,16 +12,16 @@ namespace HealthCheck.Framework
     /// <summary>
     /// This class is responsible for loading and parsing health check configuration files.
     /// </summary>
-    public class ConfigurationReader : IConfigReader
+    public class ConfigurationFileReader : IHealthCheckConfigurationReader
     {
-        private static ILog _log = LogManager.GetLogger<ConfigurationReader>();
+        private static ILog _log = LogManager.GetLogger<ConfigurationFileReader>();
         private string _configurationLocation;
         private XElement _rootNode;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigurationReader"/> class.
+        /// Initializes a new instance of the <see cref="ConfigurationFileReader"/> class.
         /// </summary>
-        public ConfigurationReader()
+        public ConfigurationFileReader()
         {
             _configurationLocation = Path.Combine(Environment.CurrentDirectory, "conf");
             _log.Debug(m => m("Will look in '{0}' for configuration files...", _configurationLocation));
@@ -42,7 +42,7 @@ namespace HealthCheck.Framework
         {
             ICalendar calendar = null;
 
-            var exclusionsNode = node.Element("calendar");
+            var exclusionsNode = node.Element("Calendar");
 
             if (exclusionsNode == null)
             {
@@ -67,6 +67,32 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
+        /// Load and read a configuration file located in the 'configuration' folder and builds a
+        /// list of groups containing health checks in the processed configuration file.
+        /// </summary>
+        /// <param name="configurationFile">The configuration file path.</param>
+        /// <returns>
+        /// A list of groups containing health checks in the processed configuration file.
+        /// </returns>
+        /// <exception cref="System.ApplicationException">
+        /// Occurs when a duplicate group name is used
+        /// </exception>
+        public List<HealthCheckGroup> Read(string configurationFile)
+        {
+            var groups = new List<HealthCheckGroup>();
+
+            if (!Directory.Exists(_configurationLocation))
+            {
+                return groups;
+            }
+
+            _log.Info(m => m("Parsing {0} for configuration...", configurationFile));
+            groups.AddRange(ReadFile(configurationFile));
+
+            return groups;
+        }
+
+        /// <summary>
         /// Load and read all of the configuration files in the 'configuration' folder and builds a
         /// merged list of groups containing health checks in the processed configuration file.
         /// </summary>
@@ -76,7 +102,7 @@ namespace HealthCheck.Framework
         /// <exception cref="System.ApplicationException">
         /// Occurs when a duplicate group name is used
         /// </exception>
-        public List<HealthCheckGroup> ReadGroups()
+        public List<HealthCheckGroup> ReadAll()
         {
             var groups = new List<HealthCheckGroup>();
 
@@ -94,12 +120,12 @@ namespace HealthCheck.Framework
 
         private ICalendar GetCalendar(XElement node)
         {
-            var exclusionType = ReadAttribute(node, "type");
+            var exclusionType = ReadAttribute(node, "Type");
 
             switch (exclusionType)
             {
                 case "cron":
-                    var calendar = new CronCalendar(ReadAttribute(node, "expression"));
+                    var calendar = new CronCalendar(ReadAttribute(node, "Expression"));
                     return calendar;
 
                 default:

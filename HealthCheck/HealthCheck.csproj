@@ -78,12 +78,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framework\ComponentFactory.cs" />
-    <Compile Include="Framework\ConfigurationReader.cs" />
+    <Compile Include="Framework\ConfigurationFileReader.cs" />
     <Compile Include="Framework\JobConfiguration.cs" />
     <Compile Include="Framework\HealthCheckGroup.cs" />
     <Compile Include="Framework\HealthCheckJob.cs" />
     <Compile Include="Framework\IComponentFactory.cs" />
-    <Compile Include="Framework\IConfigurationReader.cs" />
+    <Compile Include="Framework\IHealthCheckConfigurationReader.cs" />
     <Compile Include="Framework\IHealthCheckJob.cs" />
     <Compile Include="HealthService.cs" />
     <Compile Include="Framework\PluginManager.cs" />
