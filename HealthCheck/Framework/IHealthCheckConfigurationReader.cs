@@ -6,7 +6,7 @@ namespace HealthCheck.Framework
     /// This interface allows for a pluggable provider that is responsible for loading and parsing
     /// health check configuration files.
     /// </summary>
-    public interface IConfigurationReader
+    public interface IHealthCheckConfigurationReader
     {
         /// <summary>
         /// Load and read a configuration file located in the 'configuration' folder and builds a
