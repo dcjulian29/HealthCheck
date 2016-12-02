@@ -92,10 +92,10 @@ namespace HealthCheck.Framework
                     break;
 
                 case "cron":
-                    if (node?.Attribute("expression") != null)
+                    if (node?.Attribute("Expression") != null)
                     {
                         trigger = new CronTriggerImpl(
-                            System.Guid.NewGuid().ToString(), "Project", node?.Attribute("expression")?.Value);
+                            Guid.NewGuid().ToString(), "Project", node?.Attribute("Expression")?.Value);
                     }
                     else
                     {
@@ -141,7 +141,7 @@ namespace HealthCheck.Framework
         {
             var repeatcount = -1;
             var newId = Guid.NewGuid().ToString();
-            var repeatinterval = TimeSpan.Parse(node?.Attribute("repeat")?.Value);
+            var repeatinterval = TimeSpan.Parse(node?.Attribute("Repeat")?.Value);
 
             // wait for 10 seconds + random amount before running the first job
             var startupDelay = DateTime.Now.AddSeconds(10 + new Random().Next(0, 60));
