@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Common.Logging;
 using HealthCheck.Framework;
 using Moq;
+using Quartz.Impl.Triggers;
 using Xunit;
 
 namespace HealthCheck
@@ -184,6 +185,76 @@ namespace HealthCheck
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var plugin = factory.GetPlugin(String.Empty);
+            });
+        }
+
+        [Fact]
+        public void GetTrigger_Should_CreateCronTrigger()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type='cron' Expression='0 30 4 * * ?'/>");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.IsType<CronTriggerImpl>(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_CreateSimpleTrigger()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type='simple' Repeat='0:0:10'/>");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.IsType<SimpleTriggerImpl>(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_ReturnNull_When_CreatingCronTriggerWithNoExpression()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type='cron'/>");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.Null(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_ReturnNull_When_ProvidedUnknownTrigger()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type = 'invalid' />");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.Null(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_ThrowException_When_ProvidedInvalidTimespan()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type='simple' Repeat='0:0:10x'/>");
+            var componentFactory = new ComponentFactory();
+
+            // Act & Assert
+            Assert.Throws<FormatException>(() =>
+            {
+                var trigger = componentFactory.GetTrigger(xml);
             });
         }
 
