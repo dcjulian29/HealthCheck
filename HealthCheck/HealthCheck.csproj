@@ -83,7 +83,7 @@
     <Compile Include="Framework\HealthCheckGroup.cs" />
     <Compile Include="Framework\HealthCheckJob.cs" />
     <Compile Include="Framework\IComponentFactory.cs" />
-    <Compile Include="Framework\IConfigReader.cs" />
+    <Compile Include="Framework\IConfigurationReader.cs" />
     <Compile Include="Framework\IHealthCheckJob.cs" />
     <Compile Include="HealthService.cs" />
     <Compile Include="Framework\PluginManager.cs" />
