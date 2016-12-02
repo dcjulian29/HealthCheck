@@ -13,7 +13,7 @@ namespace HealthCheck
     {
         private static ILog _log = LogManager.GetLogger<HealthService>();
         private PluginManager _manager;
-        private IConfigReader _reader;
+        private IHealthCheckConfigurationReader _reader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HealthService"/> class.
@@ -21,7 +21,7 @@ namespace HealthCheck
         public HealthService()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            _reader = new ConfigurationReader();
+            _reader = new ConfigurationFileReader();
             _manager = new PluginManager(null);
             Groups = new List<HealthCheckGroup>();
         }
@@ -32,9 +32,9 @@ namespace HealthCheck
         /// </summary>
         /// <param name="reader">The implementation of a configuration reader.</param>
         /// <param name="manager">The implementation of the plug-in manager.</param>
-        public HealthService(IConfigReader reader, PluginManager manager)
+        public HealthService(IHealthCheckConfigurationReader reader, PluginManager manager)
         {
-            _reader = reader ?? new ConfigurationReader();
+            _reader = reader ?? new ConfigurationFileReader();
             _manager = manager ?? new PluginManager(null);
             Groups = new List<HealthCheckGroup>();
         }
@@ -51,7 +51,7 @@ namespace HealthCheck
         {
             _log.Info(m => m("----> HealthCheck Service is Starting..."));
 
-            Groups = _reader.ReadGroups();
+            Groups = _reader.ReadAll();
         }
 
         /// <summary>
