@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using Common.Logging;
 using Quartz;
 using Quartz.Impl.Calendar;
@@ -16,7 +19,7 @@ namespace HealthCheck.Framework
     {
         private static ILog _log = LogManager.GetLogger<ConfigurationFileReader>();
         private string _configurationLocation;
-        private XElement _rootNode;
+        private List<HealthCheckGroup> _groups = new List<HealthCheckGroup>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationFileReader"/> class.
@@ -79,17 +82,11 @@ namespace HealthCheck.Framework
         /// </exception>
         public List<HealthCheckGroup> Read(string configurationFile)
         {
-            var groups = new List<HealthCheckGroup>();
-
-            if (!Directory.Exists(_configurationLocation))
-            {
-                return groups;
-            }
-
             _log.Info(m => m("Parsing {0} for configuration...", configurationFile));
-            groups.AddRange(ReadFile(configurationFile));
 
-            return groups;
+            _groups.AddRange(ReadFile(configurationFile));
+
+            return _groups;
         }
 
         /// <summary>
@@ -104,18 +101,17 @@ namespace HealthCheck.Framework
         /// </exception>
         public List<HealthCheckGroup> ReadAll()
         {
-            var groups = new List<HealthCheckGroup>();
-
-            if (Directory.Exists(_configurationLocation))
+            if (!Directory.Exists(_configurationLocation))
             {
-                foreach (var file in Directory.GetFiles(_configurationLocation, "*.config"))
-                {
-                    _log.Info(m => m("Parsing {0} for configuration...", file));
-                    groups.AddRange(ReadFile(file));
-                }
+                return _groups;
             }
 
-            return groups;
+            foreach (var file in Directory.GetFiles(_configurationLocation, "*.xml"))
+            {
+                Read(file);
+            }
+
+            return _groups;
         }
 
         private ICalendar GetCalendar(XElement node)
@@ -139,18 +135,18 @@ namespace HealthCheck.Framework
             return node.Attributes().First(a => a.Name.LocalName == name).Value;
         }
 
-        private Dictionary<string, string> ReadAttributes(XElement node)
-        {
-            return node.Attributes().ToDictionary(x => x.Name.ToString(), x => x.Value);
-        }
-
         private List<HealthCheckGroup> ReadFile(string file)
         {
             var groups = new List<HealthCheckGroup>();
 
-            _rootNode = XElement.Load(file);
+            if (ValidateConfigurationFile(file))
+            {
+                return groups;
+            }
 
-            var groupNodes = _rootNode.Elements("Group").ToList();
+            var rootNode = XElement.Load(file);
+
+            var groupNodes = rootNode.Elements("Group").ToList();
 
             foreach (var node in groupNodes)
             {
@@ -159,7 +155,7 @@ namespace HealthCheck.Framework
                     Name = ReadAttribute(node, "Name")
                 };
 
-                var dupeCount = groups.Count(h => h.Name == @group.Name);
+                var dupeCount = _groups.Count(h => h.Name == @group.Name);
 
                 if (dupeCount > 0)
                 {
@@ -178,14 +174,9 @@ namespace HealthCheck.Framework
 
         private void ReadHealthChecks(HealthCheckGroup group)
         {
-            if (group.ConfigurationNode.Element("HealthChecks") == null)
-            {
-                return;
-            }
-
             var healthChecksRoot = group.ConfigurationNode.Element("HealthChecks");
 
-            foreach (var configXml in healthChecksRoot?.Elements("Check").ToList())
+            foreach (var configXml in healthChecksRoot?.Elements("Check")?.ToList())
             {
                 var configNode = new JobConfiguration()
                 {
@@ -212,6 +203,34 @@ namespace HealthCheck.Framework
             }
 
             group.CalendarExclusion = GetExclusions(group.ConfigurationNode);
+        }
+
+        private bool ValidateConfigurationFile(string file)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "HealthCheck.HealthCheckXMLSchema.xsd";
+            var schemaSet = new XmlSchemaSet();
+
+            using (var resource = assembly.GetManifestResourceStream(resourceName))
+            {
+                using (var reader = new StreamReader(resource))
+                {
+                    var xsd = reader.ReadToEnd();
+                    schemaSet.Add("", XmlReader.Create(new StringReader(xsd)));
+                }
+            }
+
+            var doc = XDocument.Load(XmlReader.Create(file));
+
+            var error = false;
+
+            doc.Validate(schemaSet, (sender, e) =>
+            {
+                _log.Error(m => m("{0} in {1}", e.Message, file));
+                error = true;
+            }, true);
+
+            return error;
         }
     }
 }
