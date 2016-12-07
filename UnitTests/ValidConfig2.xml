@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+    <Group Name="DEV">
+        <Calendar>
+        </Calendar>
+        <HealthChecks>
+            <Check Type="PingCheck" Name="Ping Dev-App1">
+                <Settings>
+                    <HostName>127.0.0.1</HostName>
+                    <TimeOut>1500</TimeOut>
+                    <ResponseTimeWarn>500</ResponseTimeWarn>
+                </Settings>
+                <Trigger Type="simple" Repeat="0:2:0" />
+                <Listener Type="Email" Threshold="Warning" />
+            </Check>
+        </HealthChecks>
+        <Listeners>
+            <Listener Type="LogFile" Threshold="Any" />
+        </Listeners>
+    </Group>
+</Configuration>

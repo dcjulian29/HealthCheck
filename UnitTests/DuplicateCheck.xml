@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+    <Group Name="PROD">
+        <Calendar>
+        </Calendar>
+        <HealthChecks>
+            <Check Type="PingCheck" Name="PingProd">
+                <Settings>
+                    <HostName>127.0.0.1</HostName>
+                    <TimeOut>1500</TimeOut>
+                    <ResponseTimeWarn>500</ResponseTimeWarn>
+                </Settings>
+                <Trigger Type="simple" Repeat="0:2:0" />
+                <Listener Type="Email" Threshold="Warning" />
+            </Check>
+            <Check Type="PingCheck" Name="PingProd">
+                <Settings>
+                    <HostName>127.0.0.1</HostName>
+                    <TimeOut>1500</TimeOut>
+                    <ResponseTimeWarn>500</ResponseTimeWarn>
+                </Settings>
+                <Trigger Type="simple" Repeat="0:2:0" />
+                <Listener Type="Email" Threshold="Warning" />
+            </Check>
+        </HealthChecks>
+        <Listeners>
+            <Listener Type="LogFile" Threshold="Any" />
+            <Listener Type="DashboardDatabase" Threshold="Error" />
+        </Listeners>
+    </Group>
+</Configuration>
