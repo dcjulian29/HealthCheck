@@ -1,8 +1,9 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
+using System;
+using System.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.Loader;
 using System.Xml.Linq;
 using Common.Logging;
 using Quartz;
@@ -12,38 +13,41 @@ using ToolKit;
 namespace HealthCheck.Framework
 {
     /// <summary>
-    /// Provides factory methods for creating plugins based off a type/key.
+    ///   Provides factory methods for creating plugins based off a type/key.
     /// </summary>
     public class ComponentFactory : DisposableObject, IComponentFactory
     {
-        private static ILog _log = Common.Logging.LogManager.GetLogger<ComponentFactory>();
+        private static ILog _log = LogManager.GetLogger<ComponentFactory>();
 
-        private DirectoryCatalog _catalog;
-        private CompositionContainer _container;
-        private string _pluginLocation;
+        private readonly string _pluginLocation;
+        private CompositionHost _container;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentFactory"/> class.
+        ///   Initializes a new instance of the <see cref="ComponentFactory" /> class.
         /// </summary>
         public ComponentFactory()
         {
             _pluginLocation = Path.Combine(Environment.CurrentDirectory, "plugins");
 
             _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
+
+            CreatePluginContainer();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentFactory"/> class.
+        ///   Initializes a new instance of the <see cref="ComponentFactory" /> class.
         /// </summary>
         public ComponentFactory(string pluginLocation)
         {
             _pluginLocation = pluginLocation;
 
             _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
+
+            CreatePluginContainer();
         }
 
         /// <summary>
-        /// Create an instance of a IStatusListener from the MEF assembly catalog
+        ///   Create an instance of a IStatusListener from the MEF assembly catalog
         /// </summary>
         /// <param name="typeName">The name matching export of the plug-in.</param>
         /// <returns>An instance of a health check status listener.</returns>
@@ -54,7 +58,7 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Create an instance of a IHealthCheckPlugin from the MEF assembly catalog
+        ///   Create an instance of a IHealthCheckPlugin from the MEF assembly catalog
         /// </summary>
         /// <param name="typeName">The name matching export of the plug-in.</param>
         /// <returns>An instance of a health check plug-in.</returns>
@@ -65,7 +69,7 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Create an instance of a Quartz trigger.
+        ///   Create an instance of a Quartz trigger.
         /// </summary>
         /// <param name="node">The XML node containing the trigger information.</param>
         /// <returns>a Quartz trigger.</returns>
@@ -109,21 +113,15 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Disposes the resources used by this component factory.
+        ///   Disposes the resources used by this component factory.
         /// </summary>
         /// <param name="disposing">
-        /// if set to <c>false</c>, this method has been called by the runtime.
+        ///   if set to <c>false</c>, this method has been called by the runtime.
         /// </param>
         protected override void DisposeResources(bool disposing)
         {
             if (disposing)
             {
-                if (_catalog != null)
-                {
-                    _catalog.Dispose();
-                    _catalog = null;
-                }
-
                 if (_container != null)
                 {
                     _container.Dispose();
@@ -132,8 +130,18 @@ namespace HealthCheck.Framework
             }
         }
 
+        private void CreatePluginContainer()
+        {
+            var assemblies = Directory.GetFiles(_pluginLocation, "*.dll")
+                .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath);
+
+            var configuration = new ContainerConfiguration().WithAssemblies(assemblies);
+
+            _container = configuration.CreateContainer();
+        }
+
         /// <summary>
-        /// Create a Quartz simple trigger based off the XML configuration.
+        ///   Create a Quartz simple trigger based off the XML configuration.
         /// </summary>
         /// <param name="node">XML configuration node.</param>
         /// <returns>A simple Quartz trigger.</returns>
@@ -166,40 +174,26 @@ namespace HealthCheck.Framework
 
             _log.Debug(m => m("Attempting to create a {0} named {1}.", typeof(T), typeName));
 
-            if (_container == null)
+            var instance = _container.GetExport<T>(typeName);
+
+            if (instance == null)
             {
-                _catalog = new DirectoryCatalog(_pluginLocation);
-                _container = new CompositionContainer(_catalog);
-            }
-
-            try
-            {
-                var instance = _container.GetExport<T>(typeName);
-
-                if (instance == null)
-                {
-                    _log.Error("MEF did not error, but returned a null object...");
-                    return null;
-                }
-
-                var instanceType = instance.Value.GetType();
-                var location = instanceType.Assembly.Location;
-
-                if (location != null)
-                {
-                    var versionInfo = FileVersionInfo.GetVersionInfo(location);
-
-                    _log.Debug(
-                        m => m("Loaded {0} [v{1}]", instanceType.AssemblyQualifiedName, versionInfo.FileVersion));
-                }
-
-                return instance.Value;
-            }
-            catch (ImportCardinalityMismatchException ex)
-            {
-                _log.Warn(m => m("Import Cardinality Mismatch Exception has happened."), ex);
+                _log.Error("MEF did not error, but returned a null object...");
                 return null;
             }
+
+            var instanceType = instance.GetType();
+            var location = instanceType.Assembly.Location;
+
+            if (location != null)
+            {
+                var versionInfo = FileVersionInfo.GetVersionInfo(location);
+
+                _log.Debug(
+                    m => m("Loaded {0} [v{1}]", instanceType.AssemblyQualifiedName, versionInfo.FileVersion));
+            }
+
+            return instance;
         }
     }
 }
