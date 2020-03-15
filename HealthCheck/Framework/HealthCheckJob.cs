@@ -1,20 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Common.Logging;
 using Quartz;
 
 namespace HealthCheck.Framework
 {
     /// <summary>
-    /// Quartz job runner for health check plugins.
+    ///   Quartz job runner for health check plugins.
     /// </summary>
     public class HealthCheckJob : IJob, IHealthCheckJob
     {
-        private static ILog _log = Common.Logging.LogManager.GetLogger<HealthCheckJob>();
+        private static readonly ILog _log = LogManager.GetLogger<HealthCheckJob>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HealthCheckJob"/> class.
+        ///   Initializes a new instance of the <see cref="HealthCheckJob" /> class.
         /// </summary>
         public HealthCheckJob()
         {
@@ -24,35 +25,35 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Gets or sets the unique identifier of this health check job.
+        ///   Gets or sets the unique identifier of this health check job.
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the XML configuration node for this heath check job.
+        ///   Gets or sets the XML configuration node for this heath check job.
         /// </summary>
         public JobConfiguration JobConfiguration { get; set; }
 
         /// <summary>
-        /// Gets or sets the listeners that should respond to the result of a health check.
+        ///   Gets or sets the listeners that should respond to the result of a health check.
         /// </summary>
         public List<IStatusListener> Listeners { get; set; }
 
         /// <summary>
-        /// Gets or sets the health check plugin to run.
+        ///   Gets or sets the health check plugin to run.
         /// </summary>
         public IHealthCheckPlugin Plugin { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of Quartz triggers.
+        ///   Gets or sets the list of Quartz triggers.
         /// </summary>
         public List<ITrigger> Triggers { get; set; }
 
         /// <summary>
-        /// Execute the plugin via the Quartz job execution handler.
+        ///   Execute the plugin via the Quartz job execution handler.
         /// </summary>
         /// <param name="context">A Quartz context containing handles to various information.</param>
-        public void Execute(IJobExecutionContext context)
+        public Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -79,10 +80,12 @@ namespace HealthCheck.Framework
                 _log.Error(m => m("Exception Executing {0}: {1}", Plugin.Name, ex.ToString()), ex);
                 Plugin.PluginStatus = PluginStatus.TaskExecutionFailure;
             }
+
+            return Task.FromResult<object>(null);
         }
 
         /// <summary>
-        /// Write out any notifications to listeners.
+        ///   Write out any notifications to listeners.
         /// </summary>
         /// <param name="status">The result of a health check execution.</param>
         public void NotifyListeners(IHealthStatus status)
