@@ -1,14 +1,13 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Common.Logging;
 using Topshelf;
-using Topshelf.Common.Logging;
 
 namespace HealthCheck
 {
-    internal class Program
+    internal static class Program
     {
-        private static ILog _log = LogManager.GetLogger<Program>();
+        private static readonly ILog _log = LogManager.GetLogger("Program");
 
         private static void Main(string[] args)
         {
@@ -29,11 +28,11 @@ namespace HealthCheck
                     s.WhenStopped(h => h.Stop());
                 });
 
-                x.UseCommonLogging();
+                x.UseNLog();
 
                 x.RunAsNetworkService();
 
-                x.SetDescription("Serice Runtime for the Health Check Service");
+                x.SetDescription("Service Runtime for the Health Check Service");
                 x.SetDisplayName("Health Check Service");
                 x.SetServiceName("HealthCheck");
             });
