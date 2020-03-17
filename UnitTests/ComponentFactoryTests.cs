@@ -1,15 +1,16 @@
-﻿using System;
-using System.ComponentModel.Composition;
+using System;
+using System.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Linq;
 using Common.Logging;
+using HealthCheck;
 using HealthCheck.Framework;
 using Moq;
 using Quartz.Impl.Triggers;
 using Xunit;
 
-namespace HealthCheck
+namespace UnitTests
 {
     [SuppressMessage(
          "StyleCop.CSharp.DocumentationRules",
@@ -30,7 +31,7 @@ namespace HealthCheck
         }
 
         [Fact]
-        public void GetListener_Should_BeAbleToInstantiateTwoNonSharedInstances()
+        public void GetListener_Should_BeAbleToInstantiateTwoInstances()
         {
             // Arrange
             var factory = new ComponentFactory();
@@ -44,20 +45,6 @@ namespace HealthCheck
 
             // Assert
             Assert.NotEqual(listener1.Threshold, listener2.Threshold);
-        }
-
-        [Fact]
-        public void GetListener_Should_BeAbleToInstantiateTwoSharedInstances()
-        {
-            // Arrange
-            var factory = new ComponentFactory();
-
-            // Act
-            var listener1 = factory.GetListener("Listen2");
-            var listener2 = factory.GetListener("Listen2");
-
-            // Assert
-            Assert.Same(listener1, listener2);
         }
 
         [Fact]
@@ -115,7 +102,7 @@ namespace HealthCheck
         }
 
         [Fact]
-        public void GetPlugin_Should_BeAbleToInstantiateTwoNonSharedInstances()
+        public void GetPlugin_Should_BeAbleToInstantiateTwoInstances()
         {
             // Arrange
             var factory = new ComponentFactory();
@@ -131,20 +118,6 @@ namespace HealthCheck
             Assert.IsType<DummyPlugin1>(plugin1);
             Assert.IsType<DummyPlugin1>(plugin2);
             Assert.NotEqual(plugin1.Name, plugin2.Name);
-        }
-
-        [Fact]
-        public void GetPlugin_Should_BeAbleToInstantiateTwoSharedInstances()
-        {
-            // Arrange
-            var factory = new ComponentFactory();
-
-            // Act
-            var plugin1 = factory.GetPlugin("ContractName2");
-            var plugin2 = factory.GetPlugin("ContractName2");
-
-            // Assert
-            Assert.Same(plugin1, plugin2);
         }
 
         [Fact]
@@ -258,7 +231,7 @@ namespace HealthCheck
             });
         }
 
-        [PartCreationPolicy(CreationPolicy.NonShared)]
+        //[PartCreationPolicy(CreationPolicy.NonShared)]
         [Export("Listen1", typeof(IStatusListener))]
         public class DummyListener1 : IStatusListener
         {
@@ -297,7 +270,7 @@ namespace HealthCheck
             }
         }
 
-        [PartCreationPolicy(CreationPolicy.NonShared)]
+        // [PartCreationPolicy(CreationPolicy.NonShared)]
         [Export("ContractName1", typeof(IHealthCheckPlugin))]
         public class DummyPlugin1 : IHealthCheckPlugin
         {

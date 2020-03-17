@@ -39,7 +39,7 @@ namespace HealthCheck.Framework
         /// </summary>
         public ComponentFactory(string pluginLocation)
         {
-            _pluginLocation = pluginLocation;
+            _pluginLocation = Path.GetFullPath(pluginLocation);
 
             _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
 
@@ -132,10 +132,15 @@ namespace HealthCheck.Framework
 
         private void CreatePluginContainer()
         {
-            var assemblies = Directory.GetFiles(_pluginLocation, "*.dll")
-                .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath);
+            var configuration = new ContainerConfiguration();
+            var files = Directory.GetFiles(_pluginLocation, "*.dll");
 
-            var configuration = new ContainerConfiguration().WithAssemblies(assemblies);
+            if (files.Length > 0)
+            {
+                var assemblies = files.Select(AssemblyLoadContext.Default.LoadFromAssemblyPath).ToList();
+
+                configuration = configuration.WithAssemblies(assemblies);
+            }
 
             _container = configuration.CreateContainer();
         }
@@ -174,7 +179,17 @@ namespace HealthCheck.Framework
 
             _log.Debug(m => m("Attempting to create a {0} named {1}.", typeof(T), typeName));
 
-            var instance = _container.GetExport<T>(typeName);
+            T instance = default(T);
+
+            try
+            {
+                instance = _container.GetExport<T>(typeName);
+            }
+            catch (CompositionFailedException ex)
+            {
+                _log.Error(ex.Message);
+                return null;
+            }
 
             if (instance == null)
             {
