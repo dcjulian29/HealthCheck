@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +13,7 @@ using Quartz.Impl.Calendar;
 namespace HealthCheck.Framework
 {
     /// <summary>
-    /// This class is responsible for loading and parsing health check configuration files.
+    ///   This class is responsible for loading and parsing health check configuration files.
     /// </summary>
     public class ConfigurationFileReader : IHealthCheckConfigurationReader
     {
@@ -22,7 +22,7 @@ namespace HealthCheck.Framework
         private List<HealthCheckGroup> _groups = new List<HealthCheckGroup>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigurationFileReader"/> class.
+        ///   Initializes a new instance of the <see cref="ConfigurationFileReader" /> class.
         /// </summary>
         public ConfigurationFileReader()
         {
@@ -31,15 +31,15 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Parses configuration and creates a Quartz Calendar (including nested calendars) that
-        /// contain dates/times where the health check should not be preformed.
+        ///   Parses configuration and creates a Quartz Calendar (including nested calendars) that
+        ///   contain dates/times where the health check should not be preformed.
         /// </summary>
         /// <param name="node">XML node containing 0 or more exclusions</param>
         /// <returns>
-        /// a Quartz Calendar contain dates/times where the health check should not be preformed.
+        ///   a Quartz Calendar contain dates/times where the health check should not be preformed.
         /// </returns>
         /// <remarks>
-        /// Calendars are configured at the group level and apply to all checks within a group.
+        ///   Calendars are configured at the group level and apply to all checks within a group.
         /// </remarks>
         public ICalendar GetExclusions(XElement node)
         {
@@ -70,15 +70,15 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Load and read a configuration file located in the 'configuration' folder and builds a
-        /// list of groups containing health checks in the processed configuration file.
+        ///   Load and read a configuration file located in the 'configuration' folder and builds a
+        ///   list of groups containing health checks in the processed configuration file.
         /// </summary>
         /// <param name="configurationFile">The configuration file path.</param>
         /// <returns>
-        /// A list of groups containing health checks in the processed configuration file.
+        ///   A list of groups containing health checks in the processed configuration file.
         /// </returns>
         /// <exception cref="System.ApplicationException">
-        /// Occurs when a duplicate group name is used
+        ///   Occurs when a duplicate group name is used
         /// </exception>
         public List<HealthCheckGroup> Read(string configurationFile)
         {
@@ -90,14 +90,14 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        /// Load and read all of the configuration files in the 'configuration' folder and builds a
-        /// merged list of groups containing health checks in the processed configuration file.
+        ///   Load and read all of the configuration files in the 'configuration' folder and builds
+        ///   a merged list of groups containing health checks in the processed configuration file.
         /// </summary>
         /// <returns>
-        /// A list of groups containing health checks in the processed configuration file.
+        ///   A list of groups containing health checks in the processed configuration file.
         /// </returns>
         /// <exception cref="System.ApplicationException">
-        /// Occurs when a duplicate group name is used
+        ///   Occurs when a duplicate group name is used
         /// </exception>
         public List<HealthCheckGroup> ReadAll()
         {
@@ -163,10 +163,14 @@ namespace HealthCheck.Framework
                     throw new ApplicationException("Duplicate Group Name: " + group.Name);
                 }
 
-                groups.Add(group);
                 group.ConfigurationNode = node;
 
                 ReadHealthChecks(group);
+
+                if (group.Checks.Count > 0)
+                {
+                    groups.Add(group);
+                }
             }
 
             return groups;

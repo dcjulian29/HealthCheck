@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using HealthCheck.Framework;
@@ -44,20 +44,6 @@ namespace UnitTests
         }
 
         [Fact]
-        public void Read_Should_ReturnNoChecks_When_ProvidedXmlHasNoChecks()
-        {
-            // Arrange
-            File.Copy("EmptyHealthChecks.xml", "conf\\empty.xml");
-            var reader = new ConfigurationFileReader();
-
-            // Act
-            var groups = reader.Read("conf\\empty.xml");
-
-            // Assert
-            Assert.Empty(groups[0].Checks);
-        }
-
-        [Fact]
         public void Read_Should_ReturnNoGroups_When_ProvidedXmlWithMissingElement()
         {
             // Arrange
@@ -71,6 +57,7 @@ namespace UnitTests
             Assert.Empty(groups);
         }
 
+        [Fact]
         public void Read_Should_ReturnNoGroups_When_ProvidedXmlWithoutHealthChecks()
         {
             // Arrange
@@ -109,7 +96,7 @@ namespace UnitTests
             var groups = reader.ReadAll();
 
             // Assert
-            Assert.Equal(0, groups.Count);
+            Assert.Empty(groups);
         }
 
         [Fact]

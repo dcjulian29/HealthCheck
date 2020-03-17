@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using HealthCheck;
 using HealthCheck.Framework;
@@ -13,26 +13,6 @@ namespace UnitTests
          Justification = "Test Suites do not need XML Documentation.")]
     public class HealthCheckJobTests
     {
-        [Fact]
-        public void Excute_Should_HandleExceptions()
-        {
-            // Arrange
-            var mockPlugin = new Mock<IHealthCheckPlugin>();
-            mockPlugin.Setup(p => p.Execute()).Throws(new Exception("BOOM!"));
-            mockPlugin.SetupProperty(p => p.PluginStatus);
-
-            var job = new HealthCheckJob
-            {
-                Plugin = mockPlugin.Object
-            };
-
-            // Act
-            job.Execute(null);
-
-            // Assert
-            Assert.Equal(PluginStatus.TaskExecutionFailure, job.Plugin.PluginStatus);
-        }
-
         [Fact]
         public void Execute_Should_CallListernerAfterExecution()
         {
@@ -85,6 +65,26 @@ namespace UnitTests
 
             // Assert
             Assert.True(executed);
+        }
+
+        [Fact]
+        public void Execute_Should_HandleExceptions()
+        {
+            // Arrange
+            var mockPlugin = new Mock<IHealthCheckPlugin>();
+            mockPlugin.Setup(p => p.Execute()).Throws(new Exception("BOOM!"));
+            mockPlugin.SetupProperty(p => p.PluginStatus);
+
+            var job = new HealthCheckJob
+            {
+                Plugin = mockPlugin.Object
+            };
+
+            // Act
+            job.Execute(null);
+
+            // Assert
+            Assert.Equal(PluginStatus.TaskExecutionFailure, job.Plugin.PluginStatus);
         }
 
         [Fact]
