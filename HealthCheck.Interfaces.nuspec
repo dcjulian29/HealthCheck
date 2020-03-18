@@ -8,8 +8,8 @@
     <licenseUrl>https://github.com/dcjulian29/HealthCheck/blob/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Health Check Interfaces</description>
-  </metadata>  
+  </metadata>
   <files>
-	  <file src="build\output\HealthCheck.Interfaces.*"  target="lib" />
+    <file src="build\output\HealthCheck.Interfaces.*"  target="lib" />
   </files>
 </package>
