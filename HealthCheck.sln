@@ -1,15 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck.Interfaces", "HealthCheck.Interfaces\HealthCheck.Interfaces.csproj", "{1F005DF5-B814-4C25-BBD7-9A60014F3AAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheck.Interfaces", "HealthCheck.Interfaces\HealthCheck.Interfaces.csproj", "{1F005DF5-B814-4C25-BBD7-9A60014F3AAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck", "HealthCheck\HealthCheck.csproj", "{4FC482B7-6D90-473C-81A6-47224D2932E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheck", "HealthCheck\HealthCheck.csproj", "{4FC482B7-6D90-473C-81A6-47224D2932E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D6FCAC0F-6B59-4453-BEE4-2A023F75C777}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CF3814CB-4278-44A6-B9A1-2185C5B4F961}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		build.cake = build.cake
+		HealthCheck.Interfaces.nuspec = HealthCheck.Interfaces.nuspec
+		HealthCheck.Service.nuspec = HealthCheck.Service.nuspec
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,5 +46,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D1C190BB-F2A0-47CB-B4CD-13F9C654D82F} = {D6FCAC0F-6B59-4453-BEE4-2A023F75C777}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5182411E-B892-424B-9EAA-32349C8D4E57}
 	EndGlobalSection
 EndGlobal
