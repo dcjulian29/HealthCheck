@@ -10,23 +10,23 @@
     <description>Health Check Service</description>
   </metadata>
   <files>
-    <!-- Octopus Deployment Files -->
-
     <!-- HealthCheck Supporting Library Files -->
-    <file src="build\output\HealthCheck.Interfaces.dll" />
+    <file src=".build\output\HealthCheck.Interfaces.dll" />
 
     <!-- HealthCheck Service Executable Files -->
-    <file src="build\output\HealthCheck.exe" />
-    <file src="build\output\HealthCheck.exe.config" />
+    <file src=".build\output\HealthCheck.exe" />
+    <file src=".build\output\HealthCheck.dll" />
+    <file src=".build\output\HealthCheck.dll.config" />
 
     <!-- Third-Parth Library Files -->
-    <file src="build\output\Common.Logging.Core.dll" />
-    <file src="build\output\Common.Logging.dll" />
-    <file src="build\output\Common.Logging.NLog30.dll" />
-    <file src="build\output\NLog.dll" />
-    <file src="build\output\Topshelf.Common.Logging.dll" />
-    <file src="build\output\Topshelf.dll" />
-    <file src="build\output\Quartz.dll" />
+    <file src=".build\output\Common.Logging.dll" />
+    <file src=".build\output\Common.Logging.Core.dll" />
+    <file src=".build\output\NLog.dll" />
+    <file src=".build\output\Quartz.dll" />
+    <file src=".build\output\System.*.dll" />
+    <file src=".build\output\Toolkit.dll" />
+    <file src=".build\output\Topshelf.dll" />
+    <file src=".build\output\Topshelf.*.dll" />
 
     <!-- Other Supporting Files -->
     <file src="build\output\nlog.config" />
