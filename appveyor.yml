@@ -1,0 +1,28 @@
+image:
+  - Visual Studio 2019
+#  - Ubuntu
+
+init:
+  - git config --global core.autocrlf true
+
+environment:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  APPVEYOR_YML_DISABLE_PS_LINUX: true
+
+build_script:
+  - ps: .\build.ps1
+  - sh: ./build.sh
+
+test: off
+
+pull_requests:
+  do_not_increment_build_number: true
+
+skip_branch_with_pr: true
+
+branches:
+  only:
+    - develop
+    - master
+    - /release/.*/
+    - /hotfix/.*/
