@@ -5,7 +5,7 @@
     <version>0.0.0</version>
     <authors>Julian Easterling</authors>
     <projectUrl>https://github.com/dcjulian29/HealthCheck</projectUrl>
-    <licenseUrl>https://github.com/dcjulian29/HealthCheck/blob/master/LICENSE</licenseUrl>
+    <license type="express">Apache-2.0</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Health Check Service</description>
   </metadata>
@@ -18,7 +18,7 @@
     <file src=".build\output\HealthCheck.dll" />
     <file src=".build\output\HealthCheck.dll.config" />
 
-    <!-- Third-Parth Library Files -->
+    <!-- Third-Party Library Files -->
     <file src=".build\output\Common.Logging.dll" />
     <file src=".build\output\Common.Logging.Core.dll" />
     <file src=".build\output\NLog.dll" />
@@ -29,6 +29,6 @@
     <file src=".build\output\Topshelf.*.dll" />
 
     <!-- Other Supporting Files -->
-    <file src="build\output\nlog.config" />
+    <file src=".build\output\nlog.config" />
   </files>
 </package>
