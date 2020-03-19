@@ -5,7 +5,7 @@
     <version>0.0.0</version>
     <authors>Julian Easterling</authors>
     <projectUrl>https://github.com/dcjulian29/HealthCheck</projectUrl>
-    <licenseUrl>https://github.com/dcjulian29/HealthCheck/blob/master/LICENSE</licenseUrl>
+    <license type="express">Apache-2.0</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Health Check Interfaces</description>
   </metadata>
