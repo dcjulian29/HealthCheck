@@ -18,8 +18,8 @@ namespace HealthCheck.Framework
     public class ConfigurationFileReader : IHealthCheckConfigurationReader
     {
         private static ILog _log = LogManager.GetLogger<ConfigurationFileReader>();
-        private string _configurationLocation;
-        private List<HealthCheckGroup> _groups = new List<HealthCheckGroup>();
+        private readonly string _configurationLocation;
+        private readonly List<HealthCheckGroup> _groups = new List<HealthCheckGroup>();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="ConfigurationFileReader" /> class.
@@ -160,7 +160,7 @@ namespace HealthCheck.Framework
                 if (dupeCount > 0)
                 {
                     _log.Error(m => m("Duplicate Group Name: {0}", group.Name));
-                    throw new ApplicationException("Duplicate Group Name: " + group.Name);
+                    throw new DuplicateHealthCheckException("Duplicate Group Name: " + group.Name);
                 }
 
                 group.ConfigurationNode = node;
@@ -188,10 +188,10 @@ namespace HealthCheck.Framework
                     Type = ReadAttribute(configXml, "Type")
                 };
 
-                if (@group.Checks.Count(h => h.JobConfiguration.Name == configNode.Name) > 0)
+                if (@group.Checks.Any(h => h.JobConfiguration.Name == configNode.Name))
                 {
                     _log.Warn(m => m("Duplicate Health Check Name: {0}", configNode.Name));
-                    throw new ApplicationException("Duplicate Health Check Name: " + configNode.Name);
+                    throw new DuplicateHealthCheckException("Duplicate Health Check Name: " + configNode.Name);
                 }
 
                 configNode.Listeners = configXml.Elements("Listener").ToList();
@@ -214,14 +214,12 @@ namespace HealthCheck.Framework
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "HealthCheck.HealthCheckXMLSchema.xsd";
             var schemaSet = new XmlSchemaSet();
+            var resource = assembly.GetManifestResourceStream(resourceName);
 
-            using (var resource = assembly.GetManifestResourceStream(resourceName))
+            using (var reader = new StreamReader(resource))
             {
-                using (var reader = new StreamReader(resource))
-                {
-                    var xsd = reader.ReadToEnd();
-                    schemaSet.Add("", XmlReader.Create(new StringReader(xsd)));
-                }
+                var xsd = reader.ReadToEnd();
+                _ = schemaSet.Add("", XmlReader.Create(new StringReader(xsd)));
             }
 
             var doc = XDocument.Load(XmlReader.Create(file));
