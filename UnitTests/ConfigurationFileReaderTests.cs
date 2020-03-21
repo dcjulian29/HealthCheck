@@ -81,7 +81,7 @@ namespace UnitTests
             var reader = new ConfigurationFileReader();
 
             // Act & Assert
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<DuplicateHealthCheckException>(() =>
             {
                 _ = reader.ReadAll();
             });
@@ -125,7 +125,7 @@ namespace UnitTests
             var reader = new ConfigurationFileReader();
 
             // Act & Assert
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<DuplicateHealthCheckException>(() =>
             {
                 _ = reader.ReadAll();
             });
