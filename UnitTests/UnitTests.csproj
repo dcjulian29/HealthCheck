@@ -25,9 +25,6 @@
     <None Update="DuplicateCheck.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="EmptyCheck.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="EmptyHealthChecks.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
