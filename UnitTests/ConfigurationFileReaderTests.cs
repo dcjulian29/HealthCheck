@@ -23,7 +23,9 @@ namespace UnitTests
                     Directory.Delete("conf", true);
                 }
                 catch (IOException)
-                { }
+                {
+                    ((Action)(() => { }))(); // noop
+                }
             }
 
             Directory.CreateDirectory("conf");
@@ -81,7 +83,7 @@ namespace UnitTests
             // Act & Assert
             Assert.Throws<ApplicationException>(() =>
             {
-                var groups = reader.ReadAll();
+                _ = reader.ReadAll();
             });
         }
 
@@ -125,7 +127,7 @@ namespace UnitTests
             // Act & Assert
             Assert.Throws<ApplicationException>(() =>
             {
-                var groups = reader.ReadAll();
+                _ = reader.ReadAll();
             });
         }
     }
