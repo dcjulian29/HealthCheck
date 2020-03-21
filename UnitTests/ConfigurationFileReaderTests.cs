@@ -74,20 +74,6 @@ namespace UnitTests
         }
 
         [Fact]
-        public void Read_Should_ThrowException_When_ProvidedDuplicateChecks()
-        {
-            // Arrange
-            File.Copy("DuplicateCheck.xml", "conf\\DuplicateCheck.xml");
-            var reader = new ConfigurationFileReader();
-
-            // Act & Assert
-            Assert.Throws<DuplicateHealthCheckException>(() =>
-            {
-                _ = reader.ReadAll();
-            });
-        }
-
-        [Fact]
         public void ReadAll_Should_ReturnEmptyGroupList_When_DirectoryDoesNotExist()
         {
             // Arrange
@@ -114,6 +100,20 @@ namespace UnitTests
 
             // Assert
             Assert.Equal(3, groups.Count);
+        }
+
+        [Fact]
+        public void ReadAll_Should_ThrowException_When_ProvidedDuplicateChecks()
+        {
+            // Arrange
+            File.Copy("DuplicateCheck.xml", "conf\\DuplicateCheck.xml");
+            var reader = new ConfigurationFileReader();
+
+            // Act & Assert
+            Assert.Throws<DuplicateHealthCheckException>(() =>
+            {
+                _ = reader.ReadAll();
+            });
         }
 
         [Fact]
