@@ -46,6 +46,20 @@ namespace UnitTests
         }
 
         [Fact]
+        public void Read_Should_ReturnNoGroups_When_ProvidedXmlWithMissingElement()
+        {
+            // Arrange
+            File.Copy("InValidConfig.xml", "conf\\invalid.xml");
+            var reader = new ConfigurationFileReader();
+
+            // Act
+            var groups = reader.Read("conf\\invalid.xml");
+
+            // Assert
+            Assert.Empty(groups);
+        }
+
+        [Fact]
         public void Read_Should_ReturnNoGroups_When_ProvidedXmlWithoutHealthChecks()
         {
             // Arrange
