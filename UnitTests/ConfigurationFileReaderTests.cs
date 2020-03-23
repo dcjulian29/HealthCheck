@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using HealthCheck.Framework;
+using Quartz.Impl.Calendar;
 using Xunit;
 
 namespace UnitTests
@@ -29,6 +31,34 @@ namespace UnitTests
             }
 
             Directory.CreateDirectory("conf");
+        }
+
+        [Fact]
+        public void Read_Should_ReturnCronCalendar_When_ProvidedCronElement()
+        {
+            // Arrange
+            File.Copy("CalendarCronExclusion.xml", "conf\\calendar.xml");
+            var reader = new ConfigurationFileReader();
+
+            // Act
+            var groups = reader.Read("conf\\calendar.xml");
+
+            // Assert
+            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().CalendarExclusion);
+        }
+
+        [Fact]
+        public void Read_Should_ReturnCronCalendars_When_ProvidedTwoCronElement()
+        {
+            // Arrange
+            File.Copy("CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
+            var reader = new ConfigurationFileReader();
+
+            // Act
+            var groups = reader.Read("conf\\calendar.xml");
+
+            // Assert
+            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().CalendarExclusion.CalendarBase);
         }
 
         [Fact]
@@ -71,6 +101,52 @@ namespace UnitTests
 
             // Assert
             Assert.Empty(groups);
+        }
+
+        [Fact]
+        public void Read_Should_ReturnNullCalendar_When_ProvidedUnknownElement()
+        {
+            // Arrange
+            File.Copy("CalendarInvalidExclusion.xml", "conf\\calendar.xml");
+            var reader = new ConfigurationFileReader();
+
+            // Act
+            var groups = reader.Read("conf\\calendar.xml");
+
+            // Assert
+            Assert.Null(groups.FirstOrDefault().CalendarExclusion);
+        }
+
+        [Fact]
+        public void Read_Should_ReturnParsedExclusionCorrectly()
+        {
+            // Arrange
+            File.Copy("CalendarCronExclusion.xml", "conf\\calendar.xml");
+            var reader = new ConfigurationFileReader();
+            var today = DateTime.UtcNow;
+            var eventTime = new DateTimeOffset(today.Year, today.Month, today.Day, 3, 14, 15, TimeSpan.Zero);
+
+            // Act
+            var groups = reader.Read("conf\\calendar.xml");
+
+            // Assert
+            Assert.True(groups.FirstOrDefault().CalendarExclusion.IsTimeIncluded(eventTime));
+        }
+
+        [Fact]
+        public void Read_Should_ReturnParsedExclusionCorrectly_When_ProvidedMultipleQuietPeriods()
+        {
+            // Arrange
+            File.Copy("CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
+            var reader = new ConfigurationFileReader();
+            var today = DateTime.UtcNow;
+            var eventTime = new DateTimeOffset(today.Year, today.Month, 15, 3, 0, 0, TimeSpan.Zero);
+
+            // Act
+            var groups = reader.Read("conf\\calendar.xml");
+
+            // Assert
+            Assert.True(groups.FirstOrDefault().CalendarExclusion.IsTimeIncluded(eventTime));
         }
 
         [Fact]

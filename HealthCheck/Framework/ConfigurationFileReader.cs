@@ -47,14 +47,7 @@ namespace HealthCheck.Framework
 
             var exclusionsNode = node.Element("Calendar");
 
-            if (exclusionsNode == null)
-            {
-                return null;
-            }
-
-            var exclusions = exclusionsNode.Elements().ToList();
-
-            foreach (var exclusion in exclusions)
+            foreach (var exclusion in exclusionsNode.Elements().ToList())
             {
                 if (calendar == null)
                 {
@@ -62,6 +55,7 @@ namespace HealthCheck.Framework
                 }
                 else
                 {
+                    // TODO: Need to put this in a while loop to handle more than 2 quiet periods.
                     calendar.CalendarBase = GetCalendar(exclusion);
                 }
             }
@@ -121,8 +115,7 @@ namespace HealthCheck.Framework
             switch (exclusionType)
             {
                 case "cron":
-                    var calendar = new CronCalendar(ReadAttribute(node, "Expression"));
-                    return calendar;
+                    return new CronCalendar(ReadAttribute(node, "Expression"));
 
                 default:
                     _log.Warn(m => m("Unrecognized quiet period type: {0}", exclusionType));
