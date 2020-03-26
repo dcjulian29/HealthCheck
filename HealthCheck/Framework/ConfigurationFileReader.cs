@@ -31,21 +31,18 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        ///   Parses configuration and creates a Quartz Calendar (including nested calendars) that
-        ///   contain dates/times where the health check should not be preformed.
+        ///   Parses configuration and creates a Quartz Calendars that contain dates/times where the
+        ///   health check should not be preformed.
         /// </summary>
         /// <param name="node">XML node containing 0 or more exclusions</param>
         /// <returns>
         ///   a Quartz Calendar contain dates/times where the health check should not be preformed.
         /// </returns>
-        /// <remarks>
-        ///   Calendars are configured at the group level and apply to all checks within a group.
-        /// </remarks>
         public ICalendar GetExclusions(XElement node)
         {
             ICalendar calendar = null;
 
-            var exclusionsNode = node.Element("Calendar");
+            var exclusionsNode = node.Element("QuietPeriods");
 
             foreach (var exclusion in exclusionsNode.Elements().ToList())
             {
@@ -199,7 +196,7 @@ namespace HealthCheck.Framework
                 group.Checks.Add(check);
             }
 
-            group.CalendarExclusion = GetExclusions(group.ConfigurationNode);
+            group.QuietPeriods = GetExclusions(group.ConfigurationNode);
         }
 
         private bool ValidateConfigurationFile(string file)
