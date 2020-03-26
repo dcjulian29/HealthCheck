@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Group Name="DEV">
-    <Calendar>
+    <QuietPeriods>
       <QuietPeriod Type='cron' Expression='* * 2-4 ? * *' />
-    </Calendar>
+    </QuietPeriods>
     <HealthChecks>
       <Check Type="PingCheck" Name="Ping Dev-App1">
         <Settings>
