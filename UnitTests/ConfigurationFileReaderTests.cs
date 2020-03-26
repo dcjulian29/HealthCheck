@@ -44,7 +44,7 @@ namespace UnitTests
             var groups = reader.Read("conf\\calendar.xml");
 
             // Assert
-            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().CalendarExclusion);
+            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().QuietPeriods);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace UnitTests
             var groups = reader.Read("conf\\calendar.xml");
 
             // Assert
-            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().CalendarExclusion.CalendarBase);
+            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().QuietPeriods.CalendarBase);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace UnitTests
             var groups = reader.Read("conf\\calendar.xml");
 
             // Assert
-            Assert.Null(groups.FirstOrDefault().CalendarExclusion);
+            Assert.Null(groups.FirstOrDefault().QuietPeriods);
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace UnitTests
             var groups = reader.Read("conf\\calendar.xml");
 
             // Assert
-            Assert.True(groups.FirstOrDefault().CalendarExclusion.IsTimeIncluded(eventTime));
+            Assert.True(groups.FirstOrDefault().QuietPeriods.IsTimeIncluded(eventTime));
         }
 
         [Fact]
@@ -146,7 +146,7 @@ namespace UnitTests
             var groups = reader.Read("conf\\calendar.xml");
 
             // Assert
-            Assert.True(groups.FirstOrDefault().CalendarExclusion.IsTimeIncluded(eventTime));
+            Assert.True(groups.FirstOrDefault().QuietPeriods.IsTimeIncluded(eventTime));
         }
 
         [Fact]
