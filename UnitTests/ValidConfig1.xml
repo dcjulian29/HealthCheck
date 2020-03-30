@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Group Name="QA">
-    <QuietPeriods>
-    </QuietPeriods>
     <HealthChecks>
       <Check Type="PingCheck" Name="Ping Test-App1">
         <Settings>
@@ -12,6 +10,7 @@
         </Settings>
         <Trigger Type="simple" Repeat="0:2:0" />
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods />
       </Check>
       <Check Type="PingCheck" Name="Ping Test-App2">
         <Settings>
@@ -21,6 +20,7 @@
         </Settings>
         <Trigger Type="cron" Expression="*/5 * * * *" />
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods />
       </Check>
     </HealthChecks>
     <Listeners>
@@ -29,8 +29,6 @@
     </Listeners>
   </Group>
   <Group Name="PROD">
-    <QuietPeriods>
-    </QuietPeriods>
     <HealthChecks>
       <Check Type="PingCheck" Name="Ping Prod-App1">
         <Settings>
@@ -40,6 +38,7 @@
         </Settings>
         <Trigger Type="simple" Repeat="0:2:0" />
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods />
       </Check>
       <Check Type="PingCheck" Name="Ping Prod-App2">
         <Settings>
@@ -49,6 +48,7 @@
         </Settings>
         <Trigger Type="simple" Repeat="0:2:0" />
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods />
       </Check>
     </HealthChecks>
     <Listeners>
