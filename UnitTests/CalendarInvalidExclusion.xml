@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Group Name="DEV">
-    <QuietPeriods>
-      <QuietPeriod Type='none' Expression='noexpresssion' />
-    </QuietPeriods>
     <HealthChecks>
       <Check Type="PingCheck" Name="Ping Dev-App1">
         <Settings>
@@ -13,6 +10,9 @@
         </Settings>
         <Trigger Type="simple" Repeat="0:2:0" />
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods>
+          <QuietPeriod Type='none' Expression='noexpresssion' />
+        </QuietPeriods>
       </Check>
     </HealthChecks>
     <Listeners>

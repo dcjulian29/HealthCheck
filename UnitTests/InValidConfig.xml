@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Group Name="QA">
-    <QuietPeriods>
-    </QuietPeriods>
     <HealthChecks>
       <Check Type="PingCheck" Name="Ping Test-App1">
         <Settings>
@@ -11,6 +9,7 @@
           <ResponseTimeWarn>500</ResponseTimeWarn>
         </Settings>
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods />
       </Check>
     </HealthChecks>
     <Listeners>

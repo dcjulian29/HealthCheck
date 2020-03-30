@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Group Name="QA">
-    <QuietPeriods>
-    </QuietPeriods>
     <HealthChecks>
     </HealthChecks>
     <Listeners>
