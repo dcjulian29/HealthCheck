@@ -99,6 +99,60 @@ namespace UnitTests
         }
 
         [Fact]
+        public void IsQuietPeriodWithDailyCalendars_Should_ReturnFalse_WhenEventTimeIsNotInQuietPeriod()
+        {
+            // Arrange
+            var today = DateTime.UtcNow;
+            var eventTime = new DateTimeOffset(
+                new DateTime(today.Year, today.Month, today.Day, 7, 30, 00, DateTimeKind.Local));
+
+            var startTime = new DateTime(today.Year, today.Month, today.Day, 6, 0, 00, DateTimeKind.Local);
+            var endTime = new DateTime(today.Year, today.Month, today.Day, 6, 59, 00, DateTimeKind.Local);
+            var calendar1 = new DailyCalendar(startTime, endTime); // 6:00 AM until 6:59 AM, every day
+
+            startTime = new DateTime(today.Year, today.Month, today.Day, 14, 0, 00, DateTimeKind.Local);
+            endTime = new DateTime(today.Year, today.Month, today.Day, 14, 59, 00, DateTimeKind.Local);
+            var calendar2 = new DailyCalendar(startTime, endTime); // 6:00 AM until 6:59 AM, every day
+
+            var quietPeriods = new QuietPeriods();
+            quietPeriods.AddCalendar(calendar1);
+            quietPeriods.AddCalendar(calendar2);
+
+            // Act
+            var quiet = quietPeriods.IsQuietPeriod(eventTime);
+
+            // Assert
+            Assert.False(quiet);
+        }
+
+        [Fact]
+        public void IsQuietPeriodWithDailyCalendars_Should_ReturnTrue_WhenEventTimeIsInQuietPeriod()
+        {
+            // Arrange
+            var today = DateTime.UtcNow;
+            var eventTime = new DateTimeOffset(
+                new DateTime(today.Year, today.Month, today.Day + 2, 14, 30, 00, DateTimeKind.Local));
+
+            var startTime = new DateTime(today.Year, today.Month, today.Day, 6, 0, 00, DateTimeKind.Local);
+            var endTime = new DateTime(today.Year, today.Month, today.Day, 6, 59, 00, DateTimeKind.Local);
+            var calendar1 = new DailyCalendar(startTime, endTime); // 6:00 AM until 6:59 AM, every day
+
+            startTime = new DateTime(today.Year, today.Month, today.Day, 14, 0, 00, DateTimeKind.Local);
+            endTime = new DateTime(today.Year, today.Month, today.Day, 14, 59, 00, DateTimeKind.Local);
+            var calendar2 = new DailyCalendar(startTime, endTime); // 6:00 AM until 6:59 AM, every day
+
+            var quietPeriods = new QuietPeriods();
+            quietPeriods.AddCalendar(calendar1);
+            quietPeriods.AddCalendar(calendar2);
+
+            // Act
+            var quiet = quietPeriods.IsQuietPeriod(eventTime);
+
+            // Assert
+            Assert.True(quiet);
+        }
+
+        [Fact]
         public void QuartzCronCalendar_Should_ReturnFalse_When_EventTimeInQuietPeriod()
         {
             // Arrange
