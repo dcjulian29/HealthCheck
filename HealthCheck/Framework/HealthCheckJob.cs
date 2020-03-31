@@ -20,6 +20,7 @@ namespace HealthCheck.Framework
         public HealthCheckJob()
         {
             Listeners = new List<IStatusListener>();
+            QuietPeriods = new QuietPeriods();
             Triggers = new List<ITrigger>();
             Id = Guid.NewGuid().ToString();
         }
@@ -60,6 +61,13 @@ namespace HealthCheck.Framework
         /// <param name="context">A Quartz context containing handles to various information.</param>
         public Task Execute(IJobExecutionContext context)
         {
+            var now = DateTime.Now;
+            if (QuietPeriods.IsQuietPeriod(new DateTimeOffset(now)))
+            {
+                _log.Info(m => m($"{Plugin.Name} was not executed because {now} is within a quiet period."));
+                return Task.FromResult<object>(null);
+            }
+
             try
             {
                 var sw = new Stopwatch();
