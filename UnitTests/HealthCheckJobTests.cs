@@ -92,10 +92,7 @@ namespace UnitTests
         public void Execute_Should_NotExecuteJob_When_InQuietPeriod()
         {
             // Arrange
-            var today = DateTime.Now;
-            var startTime = today.AddMinutes(-15);
-            var endTime = today.AddMinutes(15);
-            var calendar = new DailyCalendar(startTime, endTime); // 6:00 AM until 6:59 AM, every day
+            var calendar = new DailyCalendar(0, 0, 0, 0, 23, 59, 59, 999);
 
             var executed = false;
             var mock = new Mock<IHealthCheckPlugin>();
