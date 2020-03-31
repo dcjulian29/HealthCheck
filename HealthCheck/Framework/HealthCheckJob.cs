@@ -45,6 +45,11 @@ namespace HealthCheck.Framework
         public IHealthCheckPlugin Plugin { get; set; }
 
         /// <summary>
+        ///   Gets or sets the quiet periods for this health check.
+        /// </summary>
+        public QuietPeriods QuietPeriods { get; set; }
+
+        /// <summary>
         ///   Gets or sets the list of Quartz triggers.
         /// </summary>
         public List<ITrigger> Triggers { get; set; }
