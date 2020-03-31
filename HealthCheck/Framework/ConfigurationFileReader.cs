@@ -31,36 +31,6 @@ namespace HealthCheck.Framework
         }
 
         /// <summary>
-        ///   Parses configuration and creates a Quartz Calendars that contain dates/times where the
-        ///   health check should not be preformed.
-        /// </summary>
-        /// <param name="node">XML node containing 0 or more exclusions</param>
-        /// <returns>
-        ///   a Quartz Calendar contain dates/times where the health check should not be preformed.
-        /// </returns>
-        public ICalendar GetExclusions(XElement node)
-        {
-            ICalendar calendar = null;
-
-            var exclusionsNode = node.Element("QuietPeriods");
-
-            foreach (var exclusion in exclusionsNode.Elements().ToList())
-            {
-                if (calendar == null)
-                {
-                    calendar = GetCalendar(exclusion);
-                }
-                else
-                {
-                    // TODO: Need to put this in a while loop to handle more than 2 quiet periods.
-                    calendar.CalendarBase = GetCalendar(exclusion);
-                }
-            }
-
-            return calendar;
-        }
-
-        /// <summary>
         ///   Load and read a configuration file located in the 'configuration' folder and builds a
         ///   list of groups containing health checks in the processed configuration file.
         /// </summary>
@@ -105,19 +75,29 @@ namespace HealthCheck.Framework
             return _groups;
         }
 
-        private ICalendar GetCalendar(XElement node)
+        private QuietPeriods GetQuietPeriods(XElement node)
         {
-            var exclusionType = ReadAttribute(node, "Type");
+            var periods = new QuietPeriods();
 
-            switch (exclusionType)
+            var exclusionsNode = node.Element("QuietPeriods");
+
+            foreach (var exclusion in exclusionsNode.Elements().ToList())
             {
-                case "cron":
-                    return new CronCalendar(ReadAttribute(node, "Expression"));
+                var exclusionType = ReadAttribute(node, "Type");
 
-                default:
-                    _log.Warn(m => m("Unrecognized quiet period type: {0}", exclusionType));
-                    return null;
+                switch (exclusionType)
+                {
+                    case "cron":
+                        periods.AddCalendar(new CronCalendar(ReadAttribute(node, "Expression")));
+                        break;
+
+                    default:
+                        _log.Warn(m => m("Unrecognized quiet period type: {0}", exclusionType));
+                        break;
+                }
             }
+
+            return periods;
         }
 
         private string ReadAttribute(XElement node, string name)
@@ -190,13 +170,12 @@ namespace HealthCheck.Framework
 
                 var check = new HealthCheckJob()
                 {
-                    JobConfiguration = configNode
+                    JobConfiguration = configNode,
+                    QuietPeriods = GetQuietPeriods(configXml)
                 };
 
                 group.Checks.Add(check);
             }
-
-            group.QuietPeriods = GetExclusions(group.ConfigurationNode);
         }
 
         private bool ValidateConfigurationFile(string file)
