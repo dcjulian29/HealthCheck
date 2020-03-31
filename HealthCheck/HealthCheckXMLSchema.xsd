@@ -6,18 +6,6 @@
                 <xs:element name="Group" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="QuietPeriods">
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element name="QuietPeriod" minOccurs="0" maxOccurs="unbounded">
-                                            <xs:complexType>
-                                                <xs:attribute name="Type" type="xs:string" use="required" />
-                                                <xs:attribute name="Expression" type="xs:string" use="required" />
-                                            </xs:complexType>
-                                        </xs:element>
-                                    </xs:sequence>
-                                </xs:complexType>
-                            </xs:element>
                             <xs:element name="HealthChecks">
                                 <xs:complexType>
                                     <xs:sequence>
@@ -43,6 +31,18 @@
                                                         <xs:complexType>
                                                             <xs:attribute name="Type" type="xs:string" />
                                                             <xs:attribute name="Threshold" type="xs:string" />
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="QuietPeriods">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="QuietPeriod" minOccurs="0" maxOccurs="unbounded">
+                                                                    <xs:complexType>
+                                                                        <xs:attribute name="Type" type="xs:string" use="required" />
+                                                                        <xs:attribute name="Expression" type="xs:string" use="required" />
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                            </xs:sequence>
                                                         </xs:complexType>
                                                     </xs:element>
                                                 </xs:sequence>
