@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Group Name="DEV">
-    <Calendar>
-      <QuietPeriod Type='cron' Expression='* * 2-4 ? * *' />
-      <QuietPeriod Type='cron' Expression='* * * 1,15 * ? *' />
-    </Calendar>
     <HealthChecks>
       <Check Type="PingCheck" Name="Ping Dev-App1">
         <Settings>
@@ -14,6 +10,10 @@
         </Settings>
         <Trigger Type="simple" Repeat="0:2:0" />
         <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods>
+          <QuietPeriod Type='cron' Expression='* * 2-4 ? * *' />
+          <QuietPeriod Type='cron' Expression='* * * 1,15 * ? *' />
+        </QuietPeriods>
       </Check>
     </HealthChecks>
     <Listeners>

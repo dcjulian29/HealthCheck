@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using HealthCheck;
 using HealthCheck.Framework;
 using Moq;
+using Quartz.Impl.Calendar;
 using Xunit;
 
 namespace UnitTests
@@ -85,6 +86,32 @@ namespace UnitTests
 
             // Assert
             Assert.Equal(PluginStatus.TaskExecutionFailure, job.Plugin.PluginStatus);
+        }
+
+        [Fact]
+        public void Execute_Should_NotExecuteJob_When_InQuietPeriod()
+        {
+            // Arrange
+            var today = DateTime.Now;
+            var startTime = today.AddMinutes(-15);
+            var endTime = today.AddMinutes(15);
+            var calendar = new DailyCalendar(startTime, endTime); // 6:00 AM until 6:59 AM, every day
+
+            var executed = false;
+            var mock = new Mock<IHealthCheckPlugin>();
+            _ = mock.Setup(p => p.Execute()).Callback(() => executed = true);
+
+            var job = new HealthCheckJob
+            {
+                Plugin = mock.Object
+            };
+
+            // Act
+            job.QuietPeriods.AddCalendar(calendar);
+            job.Execute(null);
+
+            // Assert
+            Assert.False(executed);
         }
 
         [Fact]
