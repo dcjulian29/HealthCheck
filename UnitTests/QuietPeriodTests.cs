@@ -131,7 +131,7 @@ namespace UnitTests
             // Arrange
             var today = DateTime.UtcNow;
             var eventTime = new DateTimeOffset(
-                new DateTime(today.Year, today.Month, today.Day + 2, 14, 30, 00, DateTimeKind.Local));
+                new DateTime(today.Year, today.Month, today.Day, 14, 30, 00, DateTimeKind.Local).AddDays(2));
 
             var startTime = new DateTime(today.Year, today.Month, today.Day, 6, 0, 00, DateTimeKind.Local);
             var endTime = new DateTime(today.Year, today.Month, today.Day, 6, 59, 00, DateTimeKind.Local);
