@@ -42,9 +42,10 @@ namespace UnitTests
 
             // Act
             var groups = reader.Read("conf\\calendar.xml");
+            var check = groups.FirstOrDefault().Checks.FirstOrDefault();
 
             // Assert
-            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().QuietPeriods);
+            _ = Assert.IsAssignableFrom<CronCalendar>(check.QuietPeriods.Calendars.FirstOrDefault());
         }
 
         [Fact]
@@ -56,9 +57,11 @@ namespace UnitTests
 
             // Act
             var groups = reader.Read("conf\\calendar.xml");
+            var check = groups.FirstOrDefault().Checks.FirstOrDefault();
 
             // Assert
-            _ = Assert.IsAssignableFrom<CronCalendar>(groups.FirstOrDefault().QuietPeriods.CalendarBase);
+            _ = Assert.IsAssignableFrom<CronCalendar>(check.QuietPeriods.Calendars[0]);
+            _ = Assert.IsAssignableFrom<CronCalendar>(check.QuietPeriods.Calendars[1]);
         }
 
         [Fact]
@@ -73,6 +76,21 @@ namespace UnitTests
 
             // Assert
             Assert.NotEmpty(groups);
+        }
+
+        [Fact]
+        public void Read_Should_ReturnNoCalendars_When_ProvidedUnknownElement()
+        {
+            // Arrange
+            File.Copy("CalendarInvalidExclusion.xml", "conf\\calendar.xml");
+            var reader = new ConfigurationFileReader();
+
+            // Act
+            var groups = reader.Read("conf\\calendar.xml");
+            var check = groups.FirstOrDefault().Checks.FirstOrDefault();
+
+            // Assert
+            Assert.Equal(0, check.QuietPeriods.Count);
         }
 
         [Fact]
@@ -104,33 +122,21 @@ namespace UnitTests
         }
 
         [Fact]
-        public void Read_Should_ReturnNullCalendar_When_ProvidedUnknownElement()
-        {
-            // Arrange
-            File.Copy("CalendarInvalidExclusion.xml", "conf\\calendar.xml");
-            var reader = new ConfigurationFileReader();
-
-            // Act
-            var groups = reader.Read("conf\\calendar.xml");
-
-            // Assert
-            Assert.Null(groups.FirstOrDefault().QuietPeriods);
-        }
-
-        [Fact]
         public void Read_Should_ReturnParsedExclusionCorrectly()
         {
             // Arrange
             File.Copy("CalendarCronExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
             var today = DateTime.UtcNow;
-            var eventTime = new DateTimeOffset(today.Year, today.Month, today.Day, 3, 14, 15, TimeSpan.Zero);
+            var eventTime = new DateTimeOffset(
+                new DateTime(today.Year, today.Month, today.Day, 3, 14, 15, DateTimeKind.Local));
 
             // Act
             var groups = reader.Read("conf\\calendar.xml");
+            var check = groups.FirstOrDefault().Checks.FirstOrDefault();
 
             // Assert
-            Assert.True(groups.FirstOrDefault().QuietPeriods.IsTimeIncluded(eventTime));
+            Assert.True(check.QuietPeriods.IsQuietPeriod(eventTime));
         }
 
         [Fact]
@@ -140,13 +146,15 @@ namespace UnitTests
             File.Copy("CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
             var today = DateTime.UtcNow;
-            var eventTime = new DateTimeOffset(today.Year, today.Month, 15, 3, 0, 0, TimeSpan.Zero);
+            var eventTime = new DateTimeOffset(
+                new DateTime(today.Year, today.Month, 15, 7, 0, 0, DateTimeKind.Local));
 
             // Act
             var groups = reader.Read("conf\\calendar.xml");
+            var check = groups.FirstOrDefault().Checks.FirstOrDefault();
 
             // Assert
-            Assert.True(groups.FirstOrDefault().QuietPeriods.IsTimeIncluded(eventTime));
+            Assert.True(check.QuietPeriods.IsQuietPeriod(eventTime));
         }
 
         [Fact]

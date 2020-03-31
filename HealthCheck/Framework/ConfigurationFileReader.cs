@@ -7,7 +7,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using Common.Logging;
-using Quartz;
 using Quartz.Impl.Calendar;
 
 namespace HealthCheck.Framework
@@ -83,12 +82,12 @@ namespace HealthCheck.Framework
 
             foreach (var exclusion in exclusionsNode.Elements().ToList())
             {
-                var exclusionType = ReadAttribute(node, "Type");
+                var exclusionType = ReadAttribute(exclusion, "Type");
 
                 switch (exclusionType)
                 {
                     case "cron":
-                        periods.AddCalendar(new CronCalendar(ReadAttribute(node, "Expression")));
+                        periods.AddCalendar(new CronCalendar(ReadAttribute(exclusion, "Expression")));
                         break;
 
                     default:

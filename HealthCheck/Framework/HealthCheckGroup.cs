@@ -31,10 +31,5 @@ namespace HealthCheck.Framework
         ///   Gets or sets the name of the group of health checks.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        ///   Gets or sets the calendar exclusions for this group such as holidays.
-        /// </summary>
-        public ICalendar QuietPeriods { get; set; }
     }
 }
