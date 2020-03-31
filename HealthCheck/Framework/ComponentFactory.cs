@@ -75,13 +75,18 @@ namespace HealthCheck.Framework
         /// <returns>a Quartz trigger.</returns>
         public ITrigger GetTrigger(XElement node)
         {
+            if (node == null)
+            {
+                return null;
+            }
+
             ITrigger trigger = null;
 
             var triggerType = String.Empty;
 
             try
             {
-                triggerType = node?.Attribute("Type")?.Value.ToLowerInvariant();
+                triggerType = node.Attribute("Type").Value.ToLowerInvariant();
             }
             catch (NullReferenceException)
             {
@@ -96,16 +101,20 @@ namespace HealthCheck.Framework
                     break;
 
                 case "cron":
-                    if (node?.Attribute("Expression") != null)
+                    if (node.Attribute("Expression") != null)
                     {
                         trigger = new CronTriggerImpl(
-                            Guid.NewGuid().ToString(), "Project", node?.Attribute("Expression")?.Value);
+                            Guid.NewGuid().ToString(), "Project", node.Attribute("Expression").Value);
                     }
                     else
                     {
                         _log.Warn("Missing cron expression in this trigger...");
                     }
 
+                    break;
+
+                default:
+                    _log.Warn(m => m($"'{triggerType}' is an unknown trigger type."));
                     break;
             }
 
@@ -152,22 +161,25 @@ namespace HealthCheck.Framework
         /// <returns>A simple Quartz trigger.</returns>
         private ITrigger CreateSimpleTrigger(XElement node)
         {
+            if (node.Attribute("Repeat") == null)
+            {
+                return null;
+            }
+
             var repeatcount = -1;
             var newId = Guid.NewGuid().ToString();
-            var repeatinterval = TimeSpan.Parse(node?.Attribute("Repeat")?.Value);
+            var repeatinterval = TimeSpan.Parse(node.Attribute("Repeat").Value);
 
             // wait for 10 seconds + random amount before running the first job
             var startupDelay = DateTime.Now.AddSeconds(10 + new Random().Next(0, 60));
 
-            ITrigger trigger = new SimpleTriggerImpl(
+            return new SimpleTriggerImpl(
                 newId,
                 "Project",
                 startupDelay,
                 null,
                 repeatcount,
                 repeatinterval);
-
-            return trigger;
         }
 
         private T GetExportInstance<T>(string typeName) where T : class
@@ -191,22 +203,12 @@ namespace HealthCheck.Framework
                 return null;
             }
 
-            if (instance == null)
-            {
-                _log.Error("MEF did not error, but returned a null object...");
-                return null;
-            }
-
             var instanceType = instance.GetType();
             var location = instanceType.Assembly.Location;
+            var versionInfo = FileVersionInfo.GetVersionInfo(location);
 
-            if (location != null)
-            {
-                var versionInfo = FileVersionInfo.GetVersionInfo(location);
-
-                _log.Debug(
-                    m => m("Loaded {0} [v{1}]", instanceType.AssemblyQualifiedName, versionInfo.FileVersion));
-            }
+            _log.Debug(
+                m => m("Loaded {0} [v{1}]", instanceType.AssemblyQualifiedName, versionInfo.FileVersion));
 
             return instance;
         }

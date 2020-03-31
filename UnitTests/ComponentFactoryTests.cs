@@ -31,6 +31,56 @@ namespace UnitTests
         }
 
         [Fact]
+        public void Container_Should_ReturnFactory_When_PluginDirectoryDoesNotHaveFiles()
+        {
+            // Arrange
+            File.Delete("plugins/TestPlugin.dll");
+
+            // Act
+            var factory = new ComponentFactory();
+
+            // Assert
+            Assert.NotNull(factory);
+        }
+
+        [Fact]
+        public void DisposeResources_Should_DisposeContainer_When_DisposingIsTrue()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener1 = factory.GetListener("Listen1");
+
+            factory.Dispose(true);
+
+            // Assert
+            Assert.IsType<DummyListener1>(listener1);
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                _ = factory.GetListener("Listen2");
+            });
+        }
+
+        [Fact]
+        public void DisposeResources_Should_NotDisposeContainer_When_DisposingIsFalse()
+        {
+            // Arrange
+            var factory = new ComponentFactory();
+
+            // Act
+            var listener1 = factory.GetListener("Listen1");
+
+            factory.Dispose(false);
+
+            var listener2 = factory.GetListener("Listen2");
+
+            // Assert
+            Assert.IsType<DummyListener1>(listener1);
+            Assert.IsType<DummyListener2>(listener2);
+        }
+
+        [Fact]
         public void GetListener_Should_BeAbleToInstantiateTwoInstances()
         {
             // Arrange
@@ -204,10 +254,65 @@ namespace UnitTests
         }
 
         [Fact]
+        public void GetTrigger_Should_ReturnNull_When_CreatingSimpleTriggerWithNoRepeat()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type='simple' />");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.Null(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_ReturnNull_When_ProvidedCronTriggerWithMisspelledExpression()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger Type='cron' Expresion='* * * * * *' />");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.Null(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_ReturnNull_When_ProvidedNullTrigger()
+        {
+            // Arrange
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(null);
+
+            // Assert
+            Assert.Null(trigger);
+        }
+
+        [Fact]
         public void GetTrigger_Should_ReturnNull_When_ProvidedUnknownTrigger()
         {
             // Arrange
             var xml = XElement.Parse("<Trigger Type = 'invalid' />");
+            var componentFactory = new ComponentFactory();
+
+            // Act
+            var trigger = componentFactory.GetTrigger(xml);
+
+            // Assert
+            Assert.Null(trigger);
+        }
+
+        [Fact]
+        public void GetTrigger_Should_ReturnNull_When_ProvidedXMLMistingTypeOfTrigger()
+        {
+            // Arrange
+            var xml = XElement.Parse("<Trigger />");
             var componentFactory = new ComponentFactory();
 
             // Act
