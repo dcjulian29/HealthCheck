@@ -6,7 +6,7 @@ using HealthCheck.Framework;
 using Quartz.Impl.Calendar;
 using Xunit;
 
-namespace UnitTests
+namespace UnitTests.Framework
 {
     [SuppressMessage(
          "StyleCop.CSharp.DocumentationRules",
