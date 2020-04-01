@@ -10,7 +10,7 @@ using Moq;
 using Quartz.Impl.Triggers;
 using Xunit;
 
-namespace UnitTests
+namespace UnitTests.Framework
 {
     [SuppressMessage(
          "StyleCop.CSharp.DocumentationRules",
@@ -147,7 +147,7 @@ namespace UnitTests
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var listener = factory.GetListener(String.Empty);
+                _ = factory.GetListener(String.Empty);
             });
         }
 
@@ -207,7 +207,7 @@ namespace UnitTests
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plugin = factory.GetPlugin(String.Empty);
+                _ = factory.GetPlugin(String.Empty);
             });
         }
 
@@ -332,11 +332,10 @@ namespace UnitTests
             // Act & Assert
             Assert.Throws<FormatException>(() =>
             {
-                var trigger = componentFactory.GetTrigger(xml);
+                _ = componentFactory.GetTrigger(xml);
             });
         }
 
-        //[PartCreationPolicy(CreationPolicy.NonShared)]
         [Export("Listen1", typeof(IStatusListener))]
         public class DummyListener1 : IStatusListener
         {
@@ -346,6 +345,7 @@ namespace UnitTests
 
             public void Initialize()
             {
+                _log.Debug("Initialize");
             }
 
             public bool Process(IHealthStatus status)
@@ -365,6 +365,7 @@ namespace UnitTests
 
             public void Initialize()
             {
+                _log.Debug("Initialize");
             }
 
             public bool Process(IHealthStatus status)
@@ -379,6 +380,8 @@ namespace UnitTests
         [Export("ContractName1", typeof(IHealthCheckPlugin))]
         public class DummyPlugin1 : IHealthCheckPlugin
         {
+            private static ILog _log = LogManager.GetLogger<DummyPlugin1>();
+
             public string GroupName { get; set; }
 
             public string Name { get; set; }
@@ -391,20 +394,25 @@ namespace UnitTests
 
             public void SetTaskConfiguration(XElement configurationElement)
             {
+                _log.Debug("SettaskConfiguration");
             }
 
             public void Shutdown()
             {
+                _log.Debug("Shutdown");
             }
 
             public void Startup()
             {
+                _log.Debug("Startup");
             }
         }
 
         [Export("ContractName2", typeof(IHealthCheckPlugin))]
         public class DummyPlugin2 : IHealthCheckPlugin
         {
+            private static ILog _log = LogManager.GetLogger<DummyPlugin2>();
+
             public string GroupName { get; set; }
 
             public string Name { get; set; }
@@ -418,20 +426,25 @@ namespace UnitTests
 
             public void SetTaskConfiguration(XElement configurationElement)
             {
+                _log.Debug("SettaskConfiguration");
             }
 
             public void Shutdown()
             {
+                _log.Debug("Shutdown");
             }
 
             public void Startup()
             {
+                _log.Debug("Startup");
             }
         }
 
         [Export("Namespace.ContractName2", typeof(IHealthCheckPlugin))]
         public class DummyPlugin3 : IHealthCheckPlugin
         {
+            private static ILog _log = LogManager.GetLogger<DummyPlugin3>();
+
             public string GroupName { get; set; }
 
             public string Name { get; set; }
@@ -445,20 +458,25 @@ namespace UnitTests
 
             public void SetTaskConfiguration(XElement configurationElement)
             {
+                _log.Debug("SettaskConfiguration");
             }
 
             public void Shutdown()
             {
+                _log.Debug("Shutdown");
             }
 
             public void Startup()
             {
+                _log.Debug("Startup");
             }
         }
 
         [Export("Namespace.ContractName3", typeof(IHealthCheckPlugin))]
         public class DummyPlugin4 : IHealthCheckPlugin
         {
+            private static ILog _log = LogManager.GetLogger<DummyPlugin4>();
+
             public string GroupName { get; set; }
 
             public string Name { get; set; }
@@ -472,20 +490,25 @@ namespace UnitTests
 
             public void SetTaskConfiguration(XElement configurationElement)
             {
+                _log.Debug("SettaskConfiguration");
             }
 
             public void Shutdown()
             {
+                _log.Debug("Shutdown");
             }
 
             public void Startup()
             {
+                _log.Debug("Startup");
             }
         }
 
         [Export("Namespace.ContractName3", typeof(IHealthCheckPlugin))]
         public class DummyPlugin5 : IHealthCheckPlugin
         {
+            private static ILog _log = LogManager.GetLogger<DummyPlugin5>();
+
             public string GroupName { get; set; }
 
             public string Name { get; set; }
@@ -499,14 +522,17 @@ namespace UnitTests
 
             public void SetTaskConfiguration(XElement configurationElement)
             {
+                _log.Debug("SettaskConfiguration");
             }
 
             public void Shutdown()
             {
+                _log.Debug("Shutdown");
             }
 
             public void Startup()
             {
+                _log.Debug("Startup");
             }
         }
     }

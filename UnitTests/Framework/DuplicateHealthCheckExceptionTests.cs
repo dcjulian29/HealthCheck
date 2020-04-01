@@ -5,7 +5,7 @@ using HealthCheck.Framework;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace UnitTests
+namespace UnitTests.Framework
 {
     [SuppressMessage(
         "StyleCop.CSharp.DocumentationRules",

@@ -7,7 +7,7 @@ using Moq;
 using Quartz;
 using Xunit;
 
-namespace UnitTests
+namespace UnitTests.Framework
 {
     [SuppressMessage(
         "StyleCop.CSharp.DocumentationRules",
