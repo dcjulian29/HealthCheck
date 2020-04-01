@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -9,7 +9,7 @@ using Quartz;
 namespace HealthCheck
 {
     /// <summary>
-    /// Used to load and initialize the health checks as defined in configuration
+    ///   Used to load and initialize the health checks as defined in configuration
     /// </summary>
     public class PluginManager
     {
@@ -18,16 +18,16 @@ namespace HealthCheck
         private IComponentFactory _factory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PluginManager"/> class.
+        ///   Initializes a new instance of the <see cref="PluginManager" /> class.
         /// </summary>
         /// <param name="factory">The component factory to use.</param>
         public PluginManager(IComponentFactory factory)
         {
-            _factory = factory ?? new ComponentFactory();
+            _factory = factory;
         }
 
         /// <summary>
-        /// Create status listeners based off the health check configuration.
+        ///   Create status listeners based off the health check configuration.
         /// </summary>
         /// <param name="configuration">The configuration for the health check.</param>
         /// <returns>A collection of listeners to receive health check results.</returns>
@@ -35,7 +35,7 @@ namespace HealthCheck
         {
             var listeners = new List<IStatusListener>();
 
-            if (configuration.Listeners == null)
+            if (!configuration.Listeners.Any())
             {
                 return listeners;
             }
@@ -45,8 +45,8 @@ namespace HealthCheck
                 var type = ReadAttribute(listenerXml, "Type");
                 var listener = _factory.GetListener(type);
 
-                CheckResult threshold;
-                Enum.TryParse(ReadAttribute(listenerXml, "Threshold"), true, out threshold);
+                _ = Enum.TryParse(ReadAttribute(listenerXml, "Threshold"), true, out CheckResult threshold);
+
                 listener.Threshold = threshold;
 
                 listener.Initialize();
@@ -58,7 +58,7 @@ namespace HealthCheck
         }
 
         /// <summary>
-        /// Create Quartz triggers based off the health check configuration
+        ///   Create Quartz triggers based off the health check configuration
         /// </summary>
         /// <param name="configuration">The configuration settings for one health check job.</param>
         /// <returns>A collection of Quartz triggers.</returns>
@@ -66,7 +66,7 @@ namespace HealthCheck
         {
             var triggers = new List<ITrigger>();
 
-            if (configuration.Triggers == null)
+            if (!configuration.Triggers.Any())
             {
                 return triggers;
             }
@@ -79,7 +79,7 @@ namespace HealthCheck
         }
 
         /// <summary>
-        /// Create the Quartz job based on configuration settings
+        ///   Create the Quartz job based on configuration settings
         /// </summary>
         /// <param name="job">The health check job.</param>
         /// <param name="group">The group this health check job belongs to.</param>
