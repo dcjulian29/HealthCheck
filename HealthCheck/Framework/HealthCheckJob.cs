@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Common.Logging;
+using NLog;
 using Quartz;
 
 namespace HealthCheck.Framework
@@ -12,7 +12,7 @@ namespace HealthCheck.Framework
     /// </summary>
     public class HealthCheckJob : IJob, IHealthCheckJob
     {
-        private static readonly ILog _log = LogManager.GetLogger<HealthCheckJob>();
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="HealthCheckJob" /> class.
@@ -64,7 +64,7 @@ namespace HealthCheck.Framework
             var now = DateTime.Now;
             if (QuietPeriods.IsQuietPeriod(new DateTimeOffset(now)))
             {
-                _log.Info(m => m($"{Plugin.Name} was not executed because {now} is within a quiet period."));
+                _log.Info($"{Plugin.Name} was not executed because {now} is within a quiet period.");
                 return Task.FromResult<object>(null);
             }
 
@@ -80,17 +80,13 @@ namespace HealthCheck.Framework
                 status.Plugin = Plugin;
 
                 _log.Debug(
-                    m => m(
-                        "Executed plugin '{0}' - {1} [{2}ms]",
-                        Plugin.Name,
-                        status.Status,
-                        sw.ElapsedMilliseconds));
+                    "Executed plugin '{0}' - {1} [{2}ms]", Plugin.Name, status.Status, sw.ElapsedMilliseconds);
 
                 NotifyListeners(status);
             }
             catch (Exception ex)
             {
-                _log.Error(m => m("Exception Executing {0}: {1}", Plugin.Name, ex.ToString()), ex);
+                _log.Error("Exception Executing {0}: {1}", Plugin.Name, ex.ToString(), ex);
                 Plugin.PluginStatus = PluginStatus.TaskExecutionFailure;
             }
 
@@ -119,7 +115,7 @@ namespace HealthCheck.Framework
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(m => m("Error Publishing Status To Listener: {0}", ex.ToString()), ex);
+                    _log.Error("Error Publishing Status To Listener: {0}", ex.ToString(), ex);
                 }
             }
         }

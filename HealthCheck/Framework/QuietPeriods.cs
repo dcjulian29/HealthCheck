@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Common.Logging;
+using NLog;
 using Quartz;
 
 namespace HealthCheck.Framework
@@ -10,7 +10,7 @@ namespace HealthCheck.Framework
     /// </summary>
     public class QuietPeriods
     {
-        private static ILog _log = LogManager.GetLogger<QuietPeriods>();
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="QuietPeriods" /> class.
@@ -59,7 +59,7 @@ namespace HealthCheck.Framework
             {
                 if (!calendar.IsTimeIncluded(date))
                 {
-                    _log.Debug(m => m($"'{date.ToString()}' is included in {calendar}"));
+                    _log.Debug($"'{date.ToString()}' is included in {calendar}");
                     quiet = true;
                     break;
                 }
