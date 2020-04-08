@@ -3,9 +3,10 @@ using System.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Loader;
 using System.Xml.Linq;
-using Common.Logging;
+using NLog;
 using Quartz;
 using Quartz.Impl.Triggers;
 using ToolKit;
@@ -17,7 +18,7 @@ namespace HealthCheck.Framework
     /// </summary>
     public class ComponentFactory : DisposableObject, IComponentFactory
     {
-        private static ILog _log = LogManager.GetLogger<ComponentFactory>();
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         private readonly string _pluginLocation;
         private CompositionHost _container;
@@ -27,9 +28,14 @@ namespace HealthCheck.Framework
         /// </summary>
         public ComponentFactory()
         {
-            _pluginLocation = Path.Combine(Environment.CurrentDirectory, "plugins");
+            _pluginLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
+            if (Directory.Exists(Path.Combine(_pluginLocation, "plugins")))
+            {
+                _pluginLocation = Path.Combine(_pluginLocation, "plugins");
+            }
+
+            _log.Debug("Will look in '{0}' for plug-ins...", _pluginLocation);
 
             CreatePluginContainer();
         }
@@ -41,7 +47,7 @@ namespace HealthCheck.Framework
         {
             _pluginLocation = Path.GetFullPath(pluginLocation);
 
-            _log.Debug(m => m("Will look in '{0}' for plug-ins...", _pluginLocation));
+            _log.Debug("Will look in '{0}' for plug-ins...", _pluginLocation);
 
             CreatePluginContainer();
         }
@@ -114,7 +120,7 @@ namespace HealthCheck.Framework
                     break;
 
                 default:
-                    _log.Warn(m => m($"'{triggerType}' is an unknown trigger type."));
+                    _log.Warn($"'{triggerType}' is an unknown trigger type.");
                     break;
             }
 
@@ -189,7 +195,7 @@ namespace HealthCheck.Framework
                 throw new ArgumentNullException(nameof(typeName));
             }
 
-            _log.Debug(m => m("Attempting to create a {0} named {1}.", typeof(T), typeName));
+            _log.Debug("Attempting to create a {0} named {1}.", typeof(T), typeName);
 
             T instance = default(T);
 
@@ -207,8 +213,7 @@ namespace HealthCheck.Framework
             var location = instanceType.Assembly.Location;
             var versionInfo = FileVersionInfo.GetVersionInfo(location);
 
-            _log.Debug(
-                m => m("Loaded {0} [v{1}]", instanceType.AssemblyQualifiedName, versionInfo.FileVersion));
+            _log.Debug("Loaded {0} [v{1}]", instanceType.AssemblyQualifiedName, versionInfo.FileVersion);
 
             return instance;
         }

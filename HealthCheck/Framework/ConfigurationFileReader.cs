@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using Common.Logging;
+using NLog;
 using Quartz.Impl.Calendar;
 
 namespace HealthCheck.Framework
@@ -16,7 +16,7 @@ namespace HealthCheck.Framework
     /// </summary>
     public class ConfigurationFileReader : IHealthCheckConfigurationReader
     {
-        private static ILog _log = LogManager.GetLogger<ConfigurationFileReader>();
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly string _configurationLocation;
         private readonly List<HealthCheckGroup> _groups = new List<HealthCheckGroup>();
 
@@ -26,7 +26,7 @@ namespace HealthCheck.Framework
         public ConfigurationFileReader()
         {
             _configurationLocation = Path.Combine(Environment.CurrentDirectory, "conf");
-            _log.Debug(m => m("Will look in '{0}' for configuration files...", _configurationLocation));
+            _log.Debug("Will look in '{0}' for configuration files...", _configurationLocation);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace HealthCheck.Framework
         /// </exception>
         public List<HealthCheckGroup> Read(string configurationFile)
         {
-            _log.Info(m => m("Parsing {0} for configuration...", configurationFile));
+            _log.Info("Parsing {0} for configuration...", configurationFile);
 
             _groups.AddRange(ReadFile(configurationFile));
 
@@ -91,7 +91,7 @@ namespace HealthCheck.Framework
                         break;
 
                     default:
-                        _log.Warn(m => m("Unrecognized quiet period type: {0}", exclusionType));
+                        _log.Warn("Unrecognized quiet period type: {0}", exclusionType);
                         break;
                 }
             }
@@ -115,9 +115,7 @@ namespace HealthCheck.Framework
 
             var rootNode = XElement.Load(file);
 
-            var groupNodes = rootNode.Elements("Group").ToList();
-
-            foreach (var node in groupNodes)
+            foreach (var node in rootNode.Elements("Group").ToList())
             {
                 var group = new HealthCheckGroup()
                 {
@@ -128,7 +126,7 @@ namespace HealthCheck.Framework
 
                 if (dupeCount > 0)
                 {
-                    _log.Error(m => m("Duplicate Group Name: {0}", group.Name));
+                    _log.Error("Duplicate Group Name: {0}", group.Name);
                     throw new DuplicateHealthCheckException("Duplicate Group Name: " + group.Name);
                 }
 
@@ -159,7 +157,7 @@ namespace HealthCheck.Framework
 
                 if (@group.Checks.Any(h => h.JobConfiguration.Name == configNode.Name))
                 {
-                    _log.Warn(m => m("Duplicate Health Check Name: {0}", configNode.Name));
+                    _log.Warn("Duplicate Health Check Name: {0}", configNode.Name);
                     throw new DuplicateHealthCheckException("Duplicate Health Check Name: " + configNode.Name);
                 }
 
@@ -196,7 +194,7 @@ namespace HealthCheck.Framework
 
             doc.Validate(schemaSet, (sender, e) =>
             {
-                _log.Error(m => m("{0} in {1}", e.Message, file));
+                _log.Error("{0} in {1}", e.Message, file);
                 error = true;
             }, true);
 

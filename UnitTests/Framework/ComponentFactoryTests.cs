@@ -3,10 +3,10 @@ using System.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Linq;
-using Common.Logging;
 using HealthCheck;
 using HealthCheck.Framework;
 using Moq;
+using NLog;
 using Quartz.Impl.Triggers;
 using Xunit;
 
@@ -339,7 +339,7 @@ namespace UnitTests.Framework
         [Export("Listen1", typeof(IStatusListener))]
         public class DummyListener1 : IStatusListener
         {
-            private static ILog _log = LogManager.GetLogger<DummyListener1>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public CheckResult Threshold { get; set; }
 
@@ -359,7 +359,7 @@ namespace UnitTests.Framework
         [Export("Listen2", typeof(IStatusListener))]
         public class DummyListener2 : IStatusListener
         {
-            private static ILog _log = LogManager.GetLogger<DummyListener2>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public CheckResult Threshold { get; set; }
 
@@ -380,7 +380,7 @@ namespace UnitTests.Framework
         [Export("ContractName1", typeof(IHealthCheckPlugin))]
         public class DummyPlugin1 : IHealthCheckPlugin
         {
-            private static ILog _log = LogManager.GetLogger<DummyPlugin1>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public string GroupName { get; set; }
 
@@ -411,7 +411,7 @@ namespace UnitTests.Framework
         [Export("ContractName2", typeof(IHealthCheckPlugin))]
         public class DummyPlugin2 : IHealthCheckPlugin
         {
-            private static ILog _log = LogManager.GetLogger<DummyPlugin2>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public string GroupName { get; set; }
 
@@ -443,7 +443,7 @@ namespace UnitTests.Framework
         [Export("Namespace.ContractName2", typeof(IHealthCheckPlugin))]
         public class DummyPlugin3 : IHealthCheckPlugin
         {
-            private static ILog _log = LogManager.GetLogger<DummyPlugin3>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public string GroupName { get; set; }
 
@@ -475,7 +475,7 @@ namespace UnitTests.Framework
         [Export("Namespace.ContractName3", typeof(IHealthCheckPlugin))]
         public class DummyPlugin4 : IHealthCheckPlugin
         {
-            private static ILog _log = LogManager.GetLogger<DummyPlugin4>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public string GroupName { get; set; }
 
@@ -507,7 +507,7 @@ namespace UnitTests.Framework
         [Export("Namespace.ContractName3", typeof(IHealthCheckPlugin))]
         public class DummyPlugin5 : IHealthCheckPlugin
         {
-            private static ILog _log = LogManager.GetLogger<DummyPlugin5>();
+            private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
             public string GroupName { get; set; }
 

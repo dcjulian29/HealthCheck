@@ -1,23 +1,22 @@
 using System;
 using System.Reflection;
-using Common.Logging;
+using NLog;
 using Topshelf;
 
 namespace HealthCheck
 {
     internal static class Program
     {
-        private static readonly ILog _log = LogManager.GetLogger("Program");
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         private static void Main(string[] args)
         {
             var assembly = Assembly.GetEntryAssembly();
 
-            _log.Info(m => m(
-                "{0} {1} initialized on {2}",
+            _log.Info("{0} {1} initialized on {2}",
                 assembly.GetName().Name,
                 assembly.GetName().Version.ToString(),
-                Environment.MachineName));
+                Environment.MachineName);
 
             HostFactory.Run(x =>
             {

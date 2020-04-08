@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Common.Logging;
 using HealthCheck.Framework;
+using NLog;
 using Quartz;
 
 namespace HealthCheck
@@ -13,9 +13,9 @@ namespace HealthCheck
     /// </summary>
     public class PluginManager
     {
-        private static ILog _log = LogManager.GetLogger<PluginManager>();
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        private IComponentFactory _factory;
+        private readonly IComponentFactory _factory;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="PluginManager" /> class.
