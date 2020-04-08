@@ -20,7 +20,8 @@ namespace UnitTests.Framework
             // clean slate.
             while (Directory.Exists("conf"))
             {
-                try // Keep trying until directory empty
+                // Keep trying until directory empty...
+                try
                 {
                     Directory.Delete("conf", true);
                 }

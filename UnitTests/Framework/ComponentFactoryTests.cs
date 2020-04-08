@@ -21,7 +21,6 @@ namespace UnitTests.Framework
         public ComponentFactoryTests()
         {
             // Need to copy the Unit Test DLL so that MEF can find the exports below
-
             if (!Directory.Exists("plugins"))
             {
                 Directory.CreateDirectory("plugins");
@@ -385,6 +384,7 @@ namespace UnitTests.Framework
             public string GroupName { get; set; }
 
             public string Name { get; set; }
+
             public PluginStatus PluginStatus { get; set; }
 
             public IHealthStatus Execute()

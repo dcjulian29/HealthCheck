@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Xunit;
-using HealthCheck.Framework;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using HealthCheck.Framework;
+using Xunit;
 
 namespace UnitTests.Framework
 {

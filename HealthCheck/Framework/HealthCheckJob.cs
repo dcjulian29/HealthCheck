@@ -59,6 +59,7 @@ namespace HealthCheck.Framework
         ///   Execute the plugin via the Quartz job execution handler.
         /// </summary>
         /// <param name="context">A Quartz context containing handles to various information.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public Task Execute(IJobExecutionContext context)
         {
             var now = DateTime.Now;
