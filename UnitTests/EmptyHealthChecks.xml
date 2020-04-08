@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <Group Name="QA">
+    <HealthChecks>
+    </HealthChecks>
+    <Listeners>
+      <Listener Type="LogFile" Threshold="Any" />
+      <Listener Type="DashboardDatabase" Threshold="Error" />
+    </Listeners>
+  </Group>
+</Configuration>

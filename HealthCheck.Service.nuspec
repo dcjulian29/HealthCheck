@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>HealthCheck.Service</id>
-        <version>0.0.0</version>
-        <authors>Julian Easterling</authors>
-        <projectUrl>https://github.com/dcjulian29/HealthCheck</projectUrl>
-        <licenseUrl>https://github.com/dcjulian29/HealthCheck/blob/master/LICENSE</licenseUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Health Check Service</description>
-    </metadata>  
-    <files>
-        <!-- Octopus Deployment Files -->
+  <metadata>
+    <id>HealthCheck.Service</id>
+    <version>0.0.0</version>
+    <authors>Julian Easterling</authors>
+    <projectUrl>https://github.com/dcjulian29/HealthCheck</projectUrl>
+    <license type="expression">Apache-2.0</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Health Check Service</description>
+  </metadata>
+  <files>
+    <!-- HealthCheck Supporting Library Files -->
+    <file src=".build\output\HealthCheck.Interfaces.dll" />
 
-        <!-- HealthCheck Supporting Library Files -->
-        <file src="build\output\HealthCheck.Interfaces.dll" />
+    <!-- HealthCheck Service Executable Files -->
+    <file src=".build\output\HealthCheck.exe" />
+    <file src=".build\output\HealthCheck.dll" />
+    <file src=".build\output\HealthCheck.dll.config" />
 
-        <!-- HealthCheck Service Executable Files -->
-        <file src="build\output\HealthCheck.exe" />
-        <file src="build\output\HealthCheck.exe.config" />
+    <!-- Third-Party Library Files -->
+    <file src=".build\output\Common.Logging.dll" />
+    <file src=".build\output\Common.Logging.Core.dll" />
+    <file src=".build\output\NLog.dll" />
+    <file src=".build\output\Quartz.dll" />
+    <file src=".build\output\System.*.dll" />
+    <file src=".build\output\Toolkit.dll" />
+    <file src=".build\output\Topshelf.dll" />
+    <file src=".build\output\Topshelf.*.dll" />
 
-        <!-- Third-Parth Library Files -->
-        <file src="build\output\Common.Logging.Core.dll" />
-        <file src="build\output\Common.Logging.dll" />
-        <file src="build\output\Common.Logging.NLog30.dll" />
-        <file src="build\output\NLog.dll" />
-        <file src="build\output\Topshelf.Common.Logging.dll" />
-        <file src="build\output\Topshelf.dll" />
-        <file src="build\output\Quartz.dll" />
-
-        <!-- Other Supporting Files -->
-        <file src="build\output\nlog.config" />
+    <!-- Other Supporting Files -->
+    <file src=".build\output\nlog.config" />
   </files>
 </package>

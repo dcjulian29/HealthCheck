@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <Group Name="QA">
+    <HealthChecks>
+      <Check Type="PingCheck" Name="Ping Test-App1">
+        <Settings>
+          <HostName>127.0.0.1</HostName>
+          <TimeOut>1500</TimeOut>
+          <ResponseTimeWarn>500</ResponseTimeWarn>
+        </Settings>
+        <Listener Type="Email" Threshold="Warning" />
+        <QuietPeriods />
+      </Check>
+    </HealthChecks>
+    <Listeners>
+      <Listener Type="LogFile" Threshold="Any" />
+      <Listener Type="DashboardDatabase" Threshold="Error" />
+    </Listeners>
+  </Group>
+</Configuration>

@@ -1,20 +1,27 @@
-#tool "nuget:?package=xunit.runner.console"
-#tool "nuget:?package=OpenCover"
-#tool "nuget:?package=ReportGenerator"
+#tool "nuget:?package=xunit.runner.console&version=2.4.1"
+#tool "nuget:?package=OpenCover&version=4.7.922"
+#tool "nuget:?package=ReportGenerator&version=4.5.0"
+#tool "nuget:?package=GitVersion.CommandLine&version=3.6.5"
 
 var target = Argument("target", "Default");
 
-if (TeamCity.IsRunningOnTeamCity) {
-    target = "teamcity";
+var configuration = Argument("configuration", "Debug");
+
+if ((target == "Default") && (TeamCity.IsRunningOnTeamCity)) {
+    target = "TeamCity";
+    configuration = "Release";
 }
 
-var configuration = Argument("configuration", "Release");
+if ((target == "Default") && (AppVeyor.IsRunningOnAppVeyor)) {
+    target = "AppVeyor";
+    configuration = "Release";
+}
 
 var projectName = "HealthCheck";
 
 var baseDirectory = MakeAbsolute(Directory("."));
 
-var buildDirectory = baseDirectory + "\\build";
+var buildDirectory = baseDirectory + "\\.build";
 var outputDirectory = buildDirectory + "\\output";
 var packageDirectory = baseDirectory + "\\packages";
 
@@ -26,17 +33,72 @@ StartProcess ("git", new ProcessSettings {
     RedirectStandardOutput = true,
 }, out stdout);
 List<String> result = new List<string>(stdout);
-var version = result.Count == 0 ? "0.0.0" : result[0];
-
-stdout = Enumerable.Empty<string>();
-result.Clear();
+var version = String.IsNullOrEmpty(result[0]) ? "0.0.0" : result[0];
 
 StartProcess ("git", new ProcessSettings {
-    Arguments = "rev-parse --abbrev-ref HEAD",
+    Arguments = "rev-parse --short=8 HEAD",
     RedirectStandardOutput = true,
 }, out stdout);
 result = new List<string>(stdout);
-var branch = result.Count == 0 ? "undetermined" : result[0];
+var packageId = String.IsNullOrEmpty(result[0]) ? "unknown" : result[0];
+
+var branch = "unknown";
+if (AppVeyor.IsRunningOnAppVeyor) {
+    branch = EnvironmentVariable("APPVEYOR_REPO_BRANCH");
+
+    if (branch != "master") {
+        AppVeyor.UpdateBuildVersion($"{version}-{branch}.{packageId}");
+    } else {
+        AppVeyor.UpdateBuildVersion(version);
+    }
+} else {
+    StartProcess ("git", new ProcessSettings {
+        Arguments = "symbolic-ref --short HEAD",
+        RedirectStandardOutput = true,
+    }, out stdout);
+    result = new List<string>(stdout);
+    branch = String.IsNullOrEmpty(result[0]) ? "unknown" : result[0];
+}
+
+if (branch != "master") {
+    version = $"{version}-{branch}.{packageId}";
+}
+
+var msbuildSettings = new MSBuildSettings {
+    Configuration = configuration,
+    ToolVersion = MSBuildToolVersion.VS2019,
+    NodeReuse = false,
+    WarningsAsError = false
+}.WithProperty("OutDir", outputDirectory);
+
+Setup(setupContext =>
+{
+    if (setupContext.TargetTask.Name == "Package")
+    {
+        Information("Switching to Release Configuration for packaging...");
+        configuration = "Release";
+
+        msbuildSettings.Configuration = "Release";
+    }
+});
+
+TaskSetup(setupContext =>
+{
+    if (TeamCity.IsRunningOnTeamCity)
+    {
+        TeamCity.WriteStartBuildBlock(setupContext.Task.Description ?? setupContext.Task.Name);
+        TeamCity.WriteStartProgress(setupContext.Task.Description ?? setupContext.Task.Name);
+    }
+});
+
+TaskTeardown(teardownContext =>
+{
+    if (TeamCity.IsRunningOnTeamCity)
+    {
+        TeamCity.WriteEndBuildBlock(teardownContext.Task.Description ?? teardownContext.Task.Name);
+        TeamCity.WriteEndProgress(teardownContext.Task.Description ?? teardownContext.Task.Name);
+    }
+});
 
 Task("Default")
     .IsDependentOn("Compile");
@@ -45,9 +107,7 @@ Task("Clean")
     .Does(() =>
     {
         CleanDirectories(buildDirectory);
-        MSBuild(solutionFile, new MSBuildSettings {
-            Configuration = configuration,
-            }.WithTarget("Clean"));
+        MSBuild(solutionFile, msbuildSettings.WithTarget("Clean"));
     });
 
 Task("Init")
@@ -62,12 +122,23 @@ Task("Version")
     .IsDependentOn("Init")
     .Does(() =>
     {
-        Information("MARKING THIS BUILD AS VERSION " + version);
+        var gitversion = GitVersion(new GitVersionSettings{
+            UpdateAssemblyInfo = false,
+            OutputType = GitVersionOutput.Json
+        });
+
+        Information("Marking this build as version: " + version);
+
+        var assemblyVersion = "0.0.0";;
+
+        if (branch == "master") {
+            assemblyVersion = version;
+        }
 
         CreateAssemblyInfo(buildDirectory + @"\CommonAssemblyInfo.cs", new AssemblyInfoSettings {
-            Version = version,
-            FileVersion = version,
-            InformationalVersion = version,
+            Version = assemblyVersion,
+            FileVersion = assemblyVersion,
+            InformationalVersion = gitversion.FullBuildMetaData,
             Copyright = String.Format("(c) Julian Easterling {0}", DateTime.Now.Year),
             Company = String.Empty,
             Configuration = configuration
@@ -96,12 +167,7 @@ Task("Compile")
     .IsDependentOn("Version")
     .Does(() =>
     {
-        MSBuild(solutionFile, new MSBuildSettings()
-            .SetConfiguration(configuration)
-            .WithProperty("OutDir", outputDirectory)
-            .WithProperty("TreatWarningsAsErrors", "True")
-            .UseToolVersion(MSBuildToolVersion.VS2015)
-            .SetNodeReuse(false));
+        MSBuild(solutionFile, msbuildSettings.WithTarget("ReBuild"));
     });
 
 Task("Test")
@@ -111,11 +177,14 @@ Task("UnitTest")
     .IsDependentOn("Compile")
     .Does(() =>
     {
-        XUnit2(outputDirectory + "\\UnitTests.dll",
-            new XUnit2Settings {
-                Parallelism = ParallelismOption.All,
-                ShadowCopy = false
-            });
+        var dotNetTestSettings = new DotNetCoreTestSettings
+        {
+            Configuration = configuration,
+            NoBuild = true,
+            Logger = "console;verbosity=normal"
+        };
+
+        DotNetCoreTest(outputDirectory + "\\UnitTests.dll", dotNetTestSettings);
     });
 
 Task("Coverage")
@@ -124,18 +193,22 @@ Task("Coverage")
     {
         CreateDirectory(buildDirectory + "\\coverage");
 
-        OpenCover(tool => {
-            tool.XUnit2(outputDirectory + "\\UnitTests.dll",
-                new XUnit2Settings {
-                    Parallelism = ParallelismOption.All,
-                    ShadowCopy = false });
-            },
-            new FilePath(buildDirectory + "\\coverage\\coverage.xml"),
-            new OpenCoverSettings() { Register = "user" }
+        var dotNetTestSettings = new DotNetCoreTestSettings
+        {
+            Configuration = configuration,
+            NoBuild = true,
+            Logger = "console;verbosity=normal"
+        };
+
+        var openCoverSettings = new OpenCoverSettings() { Register = "user" }
                 .WithFilter(@"+[*]*")
                 .WithFilter(@"-[UnitTests]*")
+                .WithFilter(@"-[xunit.*]*")
                 .ExcludeByAttribute("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute")
-                .ExcludeByFile(@"*\\*Designer.cs;*\\*.g.cs;*.*.g.i.cs"));
+                .ExcludeByFile(@"*\\*Designer.cs;*\\*.g.cs;*.*.g.i.cs");
+
+        OpenCover(context => context.DotNetCoreTest(outputDirectory + "\\UnitTests.dll", dotNetTestSettings),
+            buildDirectory + "\\coverage\\coverage.xml", openCoverSettings);
 
         ReportGenerator(buildDirectory + "\\coverage\\coverage.xml", buildDirectory + "\\coverage");
     });
@@ -204,14 +277,26 @@ Task("Package")
     .IsDependentOn("Test")
     .Does(() =>
     {
+        CreateDirectory(buildDirectory + "\\packages");
+
         var nuGetPackSettings = new NuGetPackSettings {
             Version = version,
-            OutputDirectory = buildDirectory
+            OutputDirectory = buildDirectory + "\\packages"
         };
 
         var nuspecFiles = GetFiles(baseDirectory + "\\*.nuspec");
 
         NuGetPack(nuspecFiles, nuGetPackSettings);
+    });
+
+Task("AppVeyor")
+    .IsDependentOn("Package")
+    .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
+    .Does(() =>
+    {
+        GetFiles(buildDirectory + "\\packages\\*.nupkg")
+            .ToList()
+            .ForEach(f => AppVeyor.UploadArtifact(f, new AppVeyorUploadArtifactsSettings { DeploymentName = "packages" }));
     });
 
 RunTarget(target);

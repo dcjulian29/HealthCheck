@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="Configuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Group" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="HealthChecks">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Check" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="Settings">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:any minOccurs="0" maxOccurs="unbounded"
+                                                                        processContents="skip" />
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="Trigger">
+                                                        <xs:complexType>
+                                                            <xs:attribute name="Type" type="xs:string" use="required" />
+                                                            <xs:attribute name="Repeat" type="xs:string" use="optional" />
+                                                            <xs:attribute name="Expression" type="xs:string" use="optional" />
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="Listener">
+                                                        <xs:complexType>
+                                                            <xs:attribute name="Type" type="xs:string" />
+                                                            <xs:attribute name="Threshold" type="xs:string" />
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="QuietPeriods">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="QuietPeriod" minOccurs="0" maxOccurs="unbounded">
+                                                                    <xs:complexType>
+                                                                        <xs:attribute name="Type" type="xs:string" use="required" />
+                                                                        <xs:attribute name="Expression" type="xs:string" use="required" />
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute name="Type" type="xs:string" />
+                                                <xs:attribute name="Name" type="xs:string" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Listeners">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Listener" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:attribute name="Type" type="xs:string" />
+                                                <xs:attribute name="Threshold" type="xs:string" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="Name" type="xs:string" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
