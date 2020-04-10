@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using NLog;
 using Topshelf;
 
 namespace HealthCheck
 {
+    [ExcludeFromCodeCoverage]
     internal static class Program
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
