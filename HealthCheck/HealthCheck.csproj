@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HealthCheck.Interfaces\HealthCheck.Interfaces.csproj" />
-    <ProjectReference Include="..\HealthCheck.Listeneners\HealthCheck.Listeneners.csproj" />
+    <ProjectReference Include="..\HealthCheck.Listeners\HealthCheck.Listeners.csproj" />
     <ProjectReference Include="..\HealthCheck.Plugins\HealthCheck.Plugins.csproj" />
   </ItemGroup>
 

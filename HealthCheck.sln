@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck.Plugins", "HealthCheck.Plugins\HealthCheck.Plugins.csproj", "{EC2BBB5C-E7A5-43D0-8E0D-6420EEC0CBEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck.Listeneners", "HealthCheck.Listeneners\HealthCheck.Listeneners.csproj", "{10C11C07-625F-4173-BC5D-96EEA212E2DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck.Listeners", "HealthCheck.Listeners\HealthCheck.Listeners.csproj", "{10C11C07-625F-4173-BC5D-96EEA212E2DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

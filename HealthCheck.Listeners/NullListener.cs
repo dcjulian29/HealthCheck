@@ -1,7 +1,7 @@
 using System.Composition;
 using NLog;
 
-namespace HealthCheck.Listeneners
+namespace HealthCheck.Listeners
 {
     /// <summary>
     ///   A Null Listener does not care what the status is.
