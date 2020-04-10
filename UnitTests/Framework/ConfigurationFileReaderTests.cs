@@ -38,7 +38,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnCronCalendar_When_ProvidedCronElement()
         {
             // Arrange
-            File.Copy("CalendarCronExclusion.xml", "conf\\calendar.xml");
+            File.Copy("TestConfigurations\\CalendarCronExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -53,7 +53,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnCronCalendars_When_ProvidedTwoCronElement()
         {
             // Arrange
-            File.Copy("CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
+            File.Copy("TestConfigurations\\CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -69,7 +69,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnGroups_When_ProvidedProperXml()
         {
             // Arrange
-            File.Copy("ValidConfig1.xml", "conf\\valid.xml");
+            File.Copy("TestConfigurations\\ValidConfig1.xml", "conf\\valid.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -83,7 +83,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnNoCalendars_When_ProvidedUnknownElement()
         {
             // Arrange
-            File.Copy("CalendarInvalidExclusion.xml", "conf\\calendar.xml");
+            File.Copy("TestConfigurations\\CalendarInvalidExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -98,7 +98,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnNoGroups_When_ProvidedXmlWithMissingElement()
         {
             // Arrange
-            File.Copy("InValidConfig.xml", "conf\\invalid.xml");
+            File.Copy("TestConfigurations\\InValidConfig.xml", "conf\\invalid.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -112,7 +112,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnNoGroups_When_ProvidedXmlWithoutHealthChecks()
         {
             // Arrange
-            File.Copy("EmptyHealthChecks.xml", "conf\\invalid.xml");
+            File.Copy("TestConfigurations\\EmptyHealthChecks.xml", "conf\\invalid.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -126,7 +126,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnParsedExclusionCorrectly()
         {
             // Arrange
-            File.Copy("CalendarCronExclusion.xml", "conf\\calendar.xml");
+            File.Copy("TestConfigurations\\CalendarCronExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
             var today = DateTime.UtcNow;
             var eventTime = new DateTimeOffset(
@@ -144,7 +144,7 @@ namespace UnitTests.Framework
         public void Read_Should_ReturnParsedExclusionCorrectly_When_ProvidedMultipleQuietPeriods()
         {
             // Arrange
-            File.Copy("CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
+            File.Copy("TestConfigurations\\CalendarTwoCronExclusion.xml", "conf\\calendar.xml");
             var reader = new ConfigurationFileReader();
             var today = DateTime.UtcNow;
             var eventTime = new DateTimeOffset(
@@ -176,8 +176,8 @@ namespace UnitTests.Framework
         public void ReadAll_Should_ReturnUnionOfGroups_When_ProvidedProperXmlFiles()
         {
             // Arrange
-            File.Copy("ValidConfig1.xml", "conf\\valid1.xml");
-            File.Copy("ValidConfig2.xml", "conf\\valid2.xml");
+            File.Copy("TestConfigurations\\ValidConfig1.xml", "conf\\valid1.xml");
+            File.Copy("TestConfigurations\\ValidConfig2.xml", "conf\\valid2.xml");
             var reader = new ConfigurationFileReader();
 
             // Act
@@ -191,7 +191,7 @@ namespace UnitTests.Framework
         public void ReadAll_Should_ThrowException_When_ProvidedDuplicateChecks()
         {
             // Arrange
-            File.Copy("DuplicateCheck.xml", "conf\\DuplicateCheck.xml");
+            File.Copy("TestConfigurations\\DuplicateCheck.xml", "conf\\DuplicateCheck.xml");
             var reader = new ConfigurationFileReader();
 
             // Act & Assert
@@ -205,8 +205,8 @@ namespace UnitTests.Framework
         public void ReadAll_Should_ThrowException_When_ProvidedDuplicateGroups()
         {
             // Arrange
-            File.Copy("ValidConfig1.xml", "conf\\valid1.xml");
-            File.Copy("ValidConfig1.xml", "conf\\valid2.xml");
+            File.Copy("TestConfigurations\\ValidConfig1.xml", "conf\\valid1.xml");
+            File.Copy("TestConfigurations\\ValidConfig1.xml", "conf\\valid2.xml");
             var reader = new ConfigurationFileReader();
 
             // Act & Assert
