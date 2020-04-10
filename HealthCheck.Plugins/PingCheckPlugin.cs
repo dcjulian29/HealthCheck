@@ -23,9 +23,9 @@ namespace HealthCheck.Plugins
         public string GroupName { get; set; }
 
         /// <summary>
-        ///   Gets the hostname or IP address to ping
+        ///   Gets or sets the hostname or IP address to ping
         /// </summary>
-        public string HostName { get; private set; }
+        public string HostName { get; set; }
 
         /// <summary>
         ///   Gets or sets the plugin name or description
@@ -138,6 +138,46 @@ namespace HealthCheck.Plugins
         }
 
         /// <summary>
+        ///   Processes the ping response.
+        /// </summary>
+        /// <param name="pingStatus">The ping status.</param>
+        /// <param name="roundtripTime">The roundtrip time.</param>
+        /// <returns>A PingCheckStatus containing the result of the Ping.</returns>
+        public PingCheckStatus ProcessPingResponse(IPStatus pingStatus, long roundtripTime)
+        {
+            var status = new PingCheckStatus();
+
+            if (pingStatus == IPStatus.Success)
+            {
+                if ((ResponseTimeError > 0) && (roundtripTime > ResponseTimeError))
+                {
+                    status.Status = CheckResult.Error;
+                    status.Summary = "Ping Check Failed";
+                    status.Details = "Response time exceeds error threshold.  Response time: " + roundtripTime;
+                }
+                else if ((ResponseTimeWarn > 0) && (roundtripTime > ResponseTimeWarn))
+                {
+                    status.Status = CheckResult.Warning;
+                    status.Summary = "Ping Check Warning";
+                    status.Details = "Response time exceeds warning threshold.  Response time: " + roundtripTime;
+                }
+                else
+                {
+                    status.Summary = "Ping Check Passed.  Response time: " + roundtripTime;
+                    status.Status = CheckResult.Success;
+                }
+            }
+            else
+            {
+                status.Summary = "Ping Check Failed";
+                status.Details = "Unsuccessful result code: " + pingStatus;
+                status.Status = CheckResult.Error;
+            }
+
+            return status;
+        }
+
+        /// <summary>
         ///   Load up configuration settings from an XML fragment
         /// </summary>
         /// <param name="configurationElement">
@@ -177,40 +217,6 @@ namespace HealthCheck.Plugins
         {
             _log.Debug($"Plugin '{Name}' is starting...");
             PluginStatus = PluginStatus.Idle;
-        }
-
-        private PingCheckStatus ProcessPingResponse(IPStatus pingStatus, long roundtripTime)
-        {
-            var status = new PingCheckStatus();
-
-            if (pingStatus == IPStatus.Success)
-            {
-                if ((ResponseTimeError > 0) && (roundtripTime > ResponseTimeError))
-                {
-                    status.Status = CheckResult.Error;
-                    status.Summary = "Ping Check Failed";
-                    status.Details = "Response time exceeds error threshold.  Response time: " + roundtripTime;
-                }
-                else if ((ResponseTimeWarn > 0) && (roundtripTime > ResponseTimeWarn))
-                {
-                    status.Status = CheckResult.Warning;
-                    status.Summary = "Ping Check Warning";
-                    status.Details = "Response time exceeds warning threshold.  Response time: " + roundtripTime;
-                }
-                else
-                {
-                    status.Summary = "Ping Check Passed.  Response time: " + roundtripTime;
-                    status.Status = CheckResult.Success;
-                }
-            }
-            else
-            {
-                status.Summary = "Ping Check Failed";
-                status.Details = "Unsuccessful result code: " + pingStatus;
-                status.Status = CheckResult.Error;
-            }
-
-            return status;
         }
     }
 }
