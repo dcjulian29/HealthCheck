@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HealthCheck.Interfaces\HealthCheck.Interfaces.csproj" />
+    <ProjectReference Include="..\HealthCheck.Listeners\HealthCheck.Listeners.csproj" />
+    <ProjectReference Include="..\HealthCheck.Plugins\HealthCheck.Plugins.csproj" />
     <ProjectReference Include="..\HealthCheck\HealthCheck.csproj" />
   </ItemGroup>
 
