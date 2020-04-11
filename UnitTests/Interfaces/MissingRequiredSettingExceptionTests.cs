@@ -2,16 +2,16 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using HealthCheck.Framework;
+using HealthCheck;
 using Xunit;
 
-namespace UnitTests.Framework
+namespace UnitTests.Interfaces
 {
     [SuppressMessage(
         "StyleCop.CSharp.DocumentationRules",
         "SA1600:ElementsMustBeDocumented",
         Justification = "Test Suites do not need XML Documentation.")]
-    public class DuplicateHealthCheckExceptionTests
+    public class MissingRequiredSettingExceptionTests
     {
         [Fact]
         [SuppressMessage(
@@ -21,10 +21,10 @@ namespace UnitTests.Framework
         public void Exception_Should_ReturnExpectedException()
         {
             // Arrange & Act
-            var actual = new DuplicateHealthCheckException();
+            var actual = new MissingRequiredSettingException();
 
             // Assert
-            Assert.IsType<DuplicateHealthCheckException>(actual);
+            Assert.IsType<MissingRequiredSettingException>(actual);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace UnitTests.Framework
             // Arrange
             var guid = Guid.NewGuid().ToString();
             var message = "UnitTest";
-            var exception = new DuplicateHealthCheckException(message);
+            var exception = new MissingRequiredSettingException(message);
 
             if (File.Exists(guid))
             {
@@ -47,7 +47,7 @@ namespace UnitTests.Framework
 
             // Act
             stream = File.OpenRead(guid);
-            var actual = (DuplicateHealthCheckException)serializer.Deserialize(stream);
+            var actual = (MissingRequiredSettingException)serializer.Deserialize(stream);
             stream.Close();
 
             // Assert
@@ -62,10 +62,10 @@ namespace UnitTests.Framework
             var inner = new ApplicationException(message);
 
             // Act
-            var actual = new DuplicateHealthCheckException(message, inner);
+            var actual = new MissingRequiredSettingException(message, inner);
 
             // Assert
-            Assert.IsType<DuplicateHealthCheckException>(actual);
+            Assert.IsType<MissingRequiredSettingException>(actual);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace UnitTests.Framework
             var message = "UnitTest";
 
             // Act
-            var actual = new DuplicateHealthCheckException(message);
+            var actual = new MissingRequiredSettingException(message);
 
             // Assert
             Assert.Equal(message, actual.Message);

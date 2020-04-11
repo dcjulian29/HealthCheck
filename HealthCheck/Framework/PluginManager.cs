@@ -6,7 +6,7 @@ using HealthCheck.Framework;
 using NLog;
 using Quartz;
 
-namespace HealthCheck
+namespace HealthCheck.Framework
 {
     /// <summary>
     ///   Used to load and initialize the health checks as defined in configuration

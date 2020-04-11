@@ -43,6 +43,7 @@ namespace HealthCheck.Framework
         /// <summary>
         ///   Initializes a new instance of the <see cref="ComponentFactory" /> class.
         /// </summary>
+        /// <param name="pluginLocation">The directory that the plugin are located.</param>
         public ComponentFactory(string pluginLocation)
         {
             _pluginLocation = Path.GetFullPath(pluginLocation);
@@ -135,13 +136,10 @@ namespace HealthCheck.Framework
         /// </param>
         protected override void DisposeResources(bool disposing)
         {
-            if (disposing)
+            if (disposing && _container != null)
             {
-                if (_container != null)
-                {
-                    _container.Dispose();
-                    _container = null;
-                }
+                _container.Dispose();
+                _container = null;
             }
         }
 

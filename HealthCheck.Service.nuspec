@@ -13,6 +13,12 @@
     <!-- HealthCheck Supporting Library Files -->
     <file src=".build\output\HealthCheck.Interfaces.dll" />
 
+    <!-- HealthCheck Core Plugins Files -->
+    <file src=".build\output\HealthCheck.Plugins.dll" target="plugins/" />
+
+    <!-- HealthCheck Core Listeners Files -->
+    <file src=".build\output\HealthCheck.Listeners.dll" target="plugins/" />
+
     <!-- HealthCheck Service Executable Files -->
     <file src=".build\output\HealthCheck.exe" />
     <file src=".build\output\HealthCheck.dll" />

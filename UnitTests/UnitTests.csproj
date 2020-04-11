@@ -18,32 +18,34 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HealthCheck.Interfaces\HealthCheck.Interfaces.csproj" />
+    <ProjectReference Include="..\HealthCheck.Listeners\HealthCheck.Listeners.csproj" />
+    <ProjectReference Include="..\HealthCheck.Plugins\HealthCheck.Plugins.csproj" />
     <ProjectReference Include="..\HealthCheck\HealthCheck.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="CalendarTwoCronExclusion.xml">
+    <None Update="TestConfigurations\CalendarTwoCronExclusion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="CalendarCronExclusion.xml">
+    <None Update="TestConfigurations\CalendarCronExclusion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DuplicateCheck.xml">
+    <None Update="TestConfigurations\DuplicateCheck.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="EmptyHealthChecks.xml">
+    <None Update="TestConfigurations\EmptyHealthChecks.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="InValidConfig.xml">
+    <None Update="TestConfigurations\InValidConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ValidConfig1.xml">
+    <None Update="TestConfigurations\ValidConfig1.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="CalendarInvalidExclusion.xml">
+    <None Update="TestConfigurations\CalendarInvalidExclusion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ValidConfig2.xml">
+    <None Update="TestConfigurations\ValidConfig2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

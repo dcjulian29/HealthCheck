@@ -1,8 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
-using Xunit;
-using Quartz.Impl.Calendar;
-using HealthCheck.Framework;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using HealthCheck.Framework;
+using Quartz.Impl.Calendar;
+using Xunit;
 
 namespace UnitTests.Framework
 {

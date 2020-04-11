@@ -185,18 +185,21 @@ namespace HealthCheck.Framework
             using (var reader = new StreamReader(resource))
             {
                 var xsd = reader.ReadToEnd();
-                _ = schemaSet.Add("", XmlReader.Create(new StringReader(xsd)));
+                _ = schemaSet.Add(string.Empty, XmlReader.Create(new StringReader(xsd)));
             }
 
             var doc = XDocument.Load(XmlReader.Create(file));
 
             var error = false;
 
-            doc.Validate(schemaSet, (sender, e) =>
-            {
-                _log.Error("{0} in {1}", e.Message, file);
-                error = true;
-            }, true);
+            doc.Validate(
+                schemaSet,
+                (sender, e) =>
+                {
+                    _log.Error("{0} in {1}", e.Message, file);
+                    error = true;
+                },
+                true);
 
             return error;
         }
