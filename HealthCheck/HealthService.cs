@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using HealthCheck.Framework;
@@ -23,7 +24,7 @@ namespace HealthCheck
         /// <summary>
         ///   Initializes a new instance of the <see cref="HealthService" /> class.
         /// </summary>
-        public HealthService() : this(new ConfigurationFileReader(), new PluginManager(new ComponentFactory()))
+        public HealthService() : this(null, null)
         {
         }
 
@@ -65,7 +66,7 @@ namespace HealthCheck
 
             foreach (var group in Groups)
             {
-                var job = group.Checks.FirstOrDefault(c => c.Id == bundle.JobDetail.Key.Name) as IJob;
+                var job = group.Checks.Find(c => c.Id == bundle.JobDetail.Key.Name) as IJob;
 
                 if (job != null)
                 {
