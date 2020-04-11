@@ -8,6 +8,9 @@
     <license type="expression">Apache-2.0</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Health Check Interfaces</description>
+    <dependencies>
+      <group targetFramework="netstandard2.1" />
+    </dependencies>
   </metadata>
   <files>
     <file src=".build\output\HealthCheck.Interfaces.*"  target="lib/netstandard2.1" />
