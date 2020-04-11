@@ -51,7 +51,7 @@ namespace UnitTests
             };
 
             var now = DateTime.Now;
-            var calendar = new DailyCalendar(now.AddHours(-1), now.AddHours(1));
+            var calendar = new DailyCalendar(now.AddSeconds(0 - now.TimeOfDay.TotalSeconds), now.AddHours(1));
             var trigger = new CronTriggerImpl("NullTest", "g1", "* * * ? * * *");
 
             var bundle = new TriggerFiredBundle(
@@ -92,7 +92,7 @@ namespace UnitTests
             };
 
             var now = DateTime.Now;
-            var calendar = new DailyCalendar(now.AddHours(-1), now.AddHours(1));
+            var calendar = new DailyCalendar(now.AddSeconds(0 - now.TimeOfDay.TotalSeconds), now.AddHours(1));
             var trigger = new CronTriggerImpl("NullTest", "g1", "* * * ? * * *");
 
             var bundle = new TriggerFiredBundle(
