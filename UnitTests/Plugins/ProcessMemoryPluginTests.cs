@@ -77,7 +77,7 @@ namespace UnitTests.Plugins
             var plugin = new ProcessMemoryPlugin()
             {
                 GroupName = "UnitTest",
-                ProcessName = "explorer"
+                ProcessName = string.Empty
             };
 
             plugin.SetTaskConfiguration(SettingsWithMinimum());
