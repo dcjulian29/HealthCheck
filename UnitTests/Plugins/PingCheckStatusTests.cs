@@ -44,6 +44,16 @@ namespace UnitTests.Plugins
         }
 
         [Fact]
+        public void ResponseTime_Should_ReturnCorrectValue()
+        {
+            // Arrange & Act
+            var status = CreateHealthStatus();
+
+            // Assert
+            Assert.Equal(500, status.ResponseTime);
+        }
+
+        [Fact]
         public void Status_Should_ReturnCorrectValue()
         {
             // Arrange & Act
@@ -83,7 +93,7 @@ namespace UnitTests.Plugins
             Assert.Equal(DateTime.MinValue, status.Timestamp);
         }
 
-        private IHealthStatus CreateHealthStatus()
+        private PingCheckStatus CreateHealthStatus()
         {
             var mock = new Mock<IHealthCheckPlugin>();
             _ = mock.Setup(f => f.Name).Returns("UnitTest Plugin");
@@ -93,6 +103,7 @@ namespace UnitTests.Plugins
                 Details = "Status Details",
                 InstanceId = 1,
                 Plugin = mock.Object,
+                ResponseTime = 500,
                 Status = CheckResult.Success,
                 StatusCode = 101,
                 Summary = "Status Summary",

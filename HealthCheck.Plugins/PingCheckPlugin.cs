@@ -174,6 +174,8 @@ namespace HealthCheck.Plugins
                 status.Status = CheckResult.Error;
             }
 
+            status.ResponseTime = roundtripTime;
+
             return status;
         }
 
