@@ -76,11 +76,12 @@ namespace UnitTests.Plugins
             // Arrange
             var plugin = new ProcessMemoryPlugin()
             {
-                GroupName = "UnitTest",
-                ProcessName = string.Empty
+                GroupName = "UnitTest"
             };
 
-            plugin.SetTaskConfiguration(SettingsWithMinimum());
+            plugin.SetTaskConfiguration(
+                new XElement("Settings", new XElement("ProcessName", "_Total")));
+
             plugin.Startup();
 
             // Act
