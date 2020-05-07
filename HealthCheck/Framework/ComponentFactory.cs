@@ -146,9 +146,12 @@ namespace HealthCheck.Framework
         private void CreatePluginContainer()
         {
             var configuration = new ContainerConfiguration();
-            var files = Directory.GetFiles(_pluginLocation, "*.dll");
+            var files = Directory.GetFiles(_pluginLocation, "*.dll")
+                    .Where(n => !n.Contains("System."))
+                    .Where(n => !n.Contains("TopShelf."))
+                    .ToList();
 
-            if (files.Length > 0)
+            if (files.Count > 0)
             {
                 var assemblies = files.Select(AssemblyLoadContext.Default.LoadFromAssemblyPath).ToList();
 
